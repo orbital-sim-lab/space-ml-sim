@@ -6,8 +6,7 @@ import math
 from typing import Any
 
 from space_ml_sim.core.orbit import (
-    OrbitConfig,
-    propagate,
+    position_at,
     walker_delta_orbits,
     sun_synchronous_orbits,
     is_in_eclipse,
@@ -137,12 +136,8 @@ class Constellation:
         updated: list[Satellite] = []
 
         for sat in self.satellites:
-            # 1. Propagate orbit
-            states = propagate(sat.orbit_config, self._sim_time, 0.0, dt_seconds)
-            if states:
-                pos = states[0].position_km
-            else:
-                pos = sat.position_km
+            # 1. Compute position at current sim time
+            pos = position_at(sat.orbit_config, self._sim_time)
 
             # 2. Eclipse check
             eclipse = is_in_eclipse(pos, sun_direction)
@@ -200,6 +195,51 @@ class Constellation:
                     pairs.append((a.id, b.id, round(dist, 2)))
 
         return pairs
+
+    @classmethod
+    def from_tle(
+        cls,
+        tle_pairs: list[tuple[str, str]],
+        chip_profile: ChipProfile,
+        rad_env: RadiationEnvironment | None = None,
+    ) -> "Constellation":
+        """Build a constellation from a list of TLE line pairs.
+
+        Each element of *tle_pairs* is a ``(line1, line2)`` tuple in the
+        standard TLE format.  The satellite IDs are assigned as
+        ``TLE-000``, ``TLE-001``, … preserving the input order.
+
+        The radiation environment defaults to a LEO 500 km profile when not
+        provided; callers may pass a custom *rad_env* for more accurate
+        modelling.
+
+        Args:
+            tle_pairs: Sequence of (line1, line2) TLE string pairs.
+            chip_profile: Hardware profile applied to every satellite.
+            rad_env: Optional radiation environment.  Defaults to LEO 500 km.
+
+        Returns:
+            Constellation with one satellite per TLE pair.
+
+        Raises:
+            ValueError: If any TLE pair is invalid.
+        """
+        # Import here to avoid a circular dependency at module load time.
+        from space_ml_sim.core.tle import parse_tle  # noqa: PLC0415
+
+        satellites: list[Satellite] = []
+        for idx, (l1, l2) in enumerate(tle_pairs):
+            orbit_config = parse_tle(l1, l2)
+            satellites.append(
+                Satellite(
+                    id=f"TLE-{idx:03d}",
+                    orbit_config=orbit_config,
+                    chip_profile=chip_profile,
+                )
+            )
+
+        env = rad_env or RadiationEnvironment.leo_500km()
+        return cls(satellites=satellites, rad_env=env)
 
     @property
     def operational_count(self) -> int:

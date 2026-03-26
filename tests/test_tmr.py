@@ -130,6 +130,75 @@ class TestInjectFaultsToReplicas:
             tmr.inject_faults_to_replicas(injector, faults_per_replica=10)
 
 
+class TestSelectiveTMR:
+    """Tests for selective TMR with per-layer protection."""
+
+    def test_configure_protection_sets_layers(self, model_factory):
+        """configure_protection should store the set of protected layer names."""
+        tmr = TMRWrapper(model_factory, strategy="selective_tmr")
+        tmr.configure_protection(protected_layers={"0.weight", "0.bias"})
+        assert tmr.protected_layers == {"0.weight", "0.bias"}
+
+    def test_selective_inject_only_affects_protected_layers(self, model_factory, injector):
+        """inject_faults_to_replicas with selective TMR should only fault protected layers."""
+        tmr = TMRWrapper(model_factory, strategy="selective_tmr")
+        # Only protect the first linear layer
+        tmr.configure_protection(protected_layers={"0.weight", "0.bias"})
+
+        # Save originals
+        originals = []
+        for replica in tmr.replicas:
+            originals.append({n: p.clone() for n, p in replica.named_parameters()})
+
+        tmr.inject_faults_to_replicas(injector, faults_per_replica=200)
+
+        # Protected layers should be different across replicas (independent faults)
+        for i, replica in enumerate(tmr.replicas):
+            for name, param in replica.named_parameters():
+                if name in tmr.protected_layers:
+                    # Protected: should have been faulted (changed from original)
+                    pass  # May or may not change depending on fault distribution
+                else:
+                    # Unprotected: should be IDENTICAL to original
+                    assert torch.equal(param, originals[i][name]), (
+                        f"Unprotected layer {name} was modified in replica {i}"
+                    )
+
+    def test_selective_tmr_forward_produces_predictions(self, model_factory):
+        tmr = TMRWrapper(model_factory, strategy="selective_tmr")
+        tmr.configure_protection(protected_layers={"0.weight"})
+        x = torch.randn(4, 10)
+        result = tmr.forward(x)
+        assert "predictions" in result
+        assert result["predictions"].shape == (4,)
+        assert result["strategy"] == "selective_tmr"
+
+    def test_selective_tmr_corrects_faults_in_protected_layers(self, model_factory, injector):
+        """Faults in protected layers should be correctable via majority vote."""
+        tmr = TMRWrapper(model_factory, strategy="selective_tmr")
+        tmr.configure_protection(protected_layers={"0.weight", "0.bias", "2.weight", "2.bias"})
+
+        x = torch.randn(4, 10)
+        clean_preds = tmr.forward(x)["predictions"].clone()
+
+        # Inject faults to only 1 replica's protected layers
+        injector.inject_weight_faults(tmr.replicas[0], num_faults=500)
+
+        # Majority vote should still produce correct output
+        faulted_preds = tmr.forward(x)["predictions"]
+        assert torch.equal(faulted_preds, clean_preds)
+
+    def test_default_no_protection_acts_like_full_tmr(self, model_factory):
+        """Without configure_protection, selective TMR should protect all layers."""
+        tmr = TMRWrapper(model_factory, strategy="selective_tmr")
+        # No configure_protection called — should default to protecting all
+        assert tmr.protected_layers is None or len(tmr.protected_layers) == 0
+        # Forward should still work
+        x = torch.randn(4, 10)
+        result = tmr.forward(x)
+        assert "predictions" in result
+
+
 class TestInvalidStrategy:
     def test_rejects_unknown_strategy(self, model_factory):
         with pytest.raises(ValueError, match="Unknown strategy"):

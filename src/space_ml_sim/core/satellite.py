@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from space_ml_sim.core.orbit import OrbitConfig
 from space_ml_sim.environment.radiation import RadiationEnvironment

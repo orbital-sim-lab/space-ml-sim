@@ -1,6 +1,5 @@
 """Tests for ML fault injection engine."""
 
-import copy
 
 import pytest
 import torch

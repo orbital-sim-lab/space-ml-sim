@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from space_ml_sim.core.satellite import Satellite
-from space_ml_sim.models.chip_profiles import ChipProfile
 
 
 @dataclass(frozen=True)

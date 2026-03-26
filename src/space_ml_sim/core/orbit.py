@@ -86,11 +86,67 @@ def _keplerian_to_cartesian(
     return (x, y, z), (vx, vy, vz)
 
 
+def _j2_drift_rates(
+    a: float, inc_rad: float, n: float
+) -> tuple[float, float]:
+    """Compute secular J2 drift rates for RAAN and argument of perigee.
+
+    Args:
+        a: Semi-major axis in km.
+        inc_rad: Inclination in radians.
+        n: Mean motion in rad/s.
+
+    Returns:
+        (d_raan_dt, d_omega_dt) both in rad/s.
+    """
+    factor = -1.5 * n * J2 * (R_EARTH_KM / a) ** 2
+    d_raan_dt = factor * math.cos(inc_rad)
+    d_omega_dt = -factor * (2.0 - 2.5 * math.sin(inc_rad) ** 2)
+    return d_raan_dt, d_omega_dt
+
+
+def position_at(
+    orbit_config: OrbitConfig,
+    time_seconds: float,
+    use_j2: bool = True,
+) -> tuple[float, float, float]:
+    """Compute satellite ECI position at a given time from epoch.
+
+    Uses Keplerian mean motion to advance the true anomaly from the
+    initial value stored in orbit_config. Optionally applies secular
+    J2 perturbations to RAAN and argument of perigee.
+
+    Args:
+        orbit_config: Orbital elements (true_anomaly_deg is the epoch value).
+        time_seconds: Time elapsed since epoch in seconds.
+        use_j2: If True (default), apply secular J2 RAAN and arg-perigee drift.
+
+    Returns:
+        (x, y, z) position in km (ECI frame).
+    """
+    a = orbit_config.semi_major_axis_km
+    inc_rad = math.radians(orbit_config.inclination_deg)
+    raan_rad = math.radians(orbit_config.raan_deg)
+    nu0_rad = math.radians(orbit_config.true_anomaly_deg)
+    n = orbit_config.mean_motion_rad_per_sec
+
+    if use_j2:
+        d_raan_dt, d_omega_dt = _j2_drift_rates(a, inc_rad, n)
+        raan_rad = raan_rad + d_raan_dt * time_seconds
+        nu_rad = nu0_rad + n * time_seconds + d_omega_dt * time_seconds
+    else:
+        nu_rad = nu0_rad + n * time_seconds
+
+    pos, _ = _keplerian_to_cartesian(a, inc_rad, raan_rad, nu_rad)
+    return pos
+
+
 def propagate(
     orbit_config: OrbitConfig,
     start_time: float = 0.0,
     duration_minutes: float = 90.0,
     step_seconds: float = 60.0,
+    use_j2: bool = True,
 ) -> list[OrbitalState]:
     """Propagate a circular Keplerian orbit over time.
 
@@ -99,15 +155,21 @@ def propagate(
         start_time: Start time offset in seconds.
         duration_minutes: Duration to propagate in minutes.
         step_seconds: Time step in seconds.
+        use_j2: If True (default), apply secular J2 RAAN and arg-perigee drift.
 
     Returns:
         List of OrbitalState tuples (time, position_km, velocity_km_s).
     """
     a = orbit_config.semi_major_axis_km
     inc_rad = math.radians(orbit_config.inclination_deg)
-    raan_rad = math.radians(orbit_config.raan_deg)
+    raan_rad_epoch = math.radians(orbit_config.raan_deg)
     nu0_rad = math.radians(orbit_config.true_anomaly_deg)
     n = orbit_config.mean_motion_rad_per_sec
+
+    if use_j2:
+        d_raan_dt, d_omega_dt = _j2_drift_rates(a, inc_rad, n)
+    else:
+        d_raan_dt, d_omega_dt = 0.0, 0.0
 
     duration_seconds = duration_minutes * 60.0
     num_steps = int(duration_seconds / step_seconds) + 1
@@ -115,7 +177,9 @@ def propagate(
     states: list[OrbitalState] = []
     for i in range(num_steps):
         t = start_time + i * step_seconds
-        nu_rad = nu0_rad + n * (t - start_time)
+        elapsed = t - start_time
+        raan_rad = raan_rad_epoch + d_raan_dt * elapsed
+        nu_rad = nu0_rad + n * elapsed + d_omega_dt * elapsed
         pos, vel = _keplerian_to_cartesian(a, inc_rad, raan_rad, nu_rad)
         states.append(OrbitalState(time_seconds=t, position_km=pos, velocity_km_s=vel))
 

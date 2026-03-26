@@ -45,6 +45,8 @@ class TMRWrapper:
         self.device = device
         self._model_factory = model_factory
 
+        self.protected_layers: set[str] | None = None  # For selective TMR
+
         if strategy in ("full_tmr", "selective_tmr"):
             self.replicas = [model_factory().to(device).eval() for _ in range(3)]
         else:
@@ -89,13 +91,26 @@ class TMRWrapper:
             "strategy": "full_tmr",
         }
 
-    def _selective_tmr_forward(self, x: torch.Tensor) -> dict[str, Any]:
-        """Selective TMR: same as full TMR but intended for partially-replicated models.
+    def configure_protection(self, protected_layers: set[str]) -> None:
+        """Configure which layers are protected by selective TMR.
 
-        In v0.1, behaves identically to full TMR. Future versions will support
-        per-layer selective replication based on sensitivity analysis.
+        Only protected layers will have independent faults across replicas.
+        Unprotected layers remain identical, so voting cannot correct their faults.
+
+        Args:
+            protected_layers: Set of parameter names (e.g., {"0.weight", "2.bias"})
+                to protect with TMR voting.
         """
-        return self._full_tmr_forward(x)
+        self.protected_layers = set(protected_layers)
+
+    def _selective_tmr_forward(self, x: torch.Tensor) -> dict[str, Any]:
+        """Selective TMR: majority vote across replicas.
+
+        Same voting mechanism as full TMR. The selectivity comes from
+        inject_faults_to_replicas, which only injects faults into protected layers.
+        """
+        result = self._full_tmr_forward(x)
+        return {**result, "strategy": "selective_tmr"}
 
     def _checkpoint_forward(self, x: torch.Tensor) -> dict[str, Any]:
         """Single model with anomaly detection and checkpoint rollback."""
@@ -128,6 +143,10 @@ class TMRWrapper:
     ) -> None:
         """Inject independent faults into each TMR replica.
 
+        For selective TMR with configured protection, only injects faults
+        into the protected layers. Unprotected layers remain identical
+        across replicas.
+
         Args:
             injector: FaultInjector instance.
             faults_per_replica: Number of faults to inject per replica.
@@ -135,8 +154,46 @@ class TMRWrapper:
         if not hasattr(self, "replicas"):
             raise RuntimeError("inject_faults_to_replicas requires TMR strategy")
 
-        for replica in self.replicas:
-            injector.inject_weight_faults(replica, num_faults=faults_per_replica)
+        if self.strategy == "selective_tmr" and self.protected_layers:
+            for replica in self.replicas:
+                self._inject_to_protected_only(
+                    replica, injector, faults_per_replica
+                )
+        else:
+            for replica in self.replicas:
+                injector.inject_weight_faults(replica, num_faults=faults_per_replica)
+
+    def _inject_to_protected_only(
+        self,
+        model: torch.nn.Module,
+        injector: FaultInjector,
+        num_faults: int,
+    ) -> None:
+        """Inject faults only into protected layers of a model.
+
+        Distributes faults proportionally across protected parameters.
+        """
+        protected_params = [
+            (name, p)
+            for name, p in model.named_parameters()
+            if p.requires_grad and name in self.protected_layers
+        ]
+        if not protected_params:
+            return
+
+        total_elements = sum(p.numel() for _, p in protected_params)
+        faults_remaining = num_faults
+
+        for name, param in protected_params:
+            layer_faults = max(1, int(num_faults * param.numel() / total_elements))
+            layer_faults = min(layer_faults, faults_remaining)
+            if layer_faults <= 0:
+                continue
+            with torch.no_grad():
+                FaultInjector.flip_random_bits(param.data, layer_faults)
+            faults_remaining -= layer_faults
+            if faults_remaining <= 0:
+                break
 
     @staticmethod
     def sensitivity_analysis(
