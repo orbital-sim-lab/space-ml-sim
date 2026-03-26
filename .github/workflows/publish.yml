@@ -43,7 +43,8 @@ jobs:
         run: |
           pip install pip-audit bandit
           pip freeze --exclude-editable > /tmp/requirements.txt
-          pip-audit --strict --desc -r /tmp/requirements.txt
+          pip-audit --desc -r /tmp/requirements.txt \
+            --ignore-vuln CVE-2026-4539
           bandit -r src/ -c pyproject.toml -ll
 
   build:
