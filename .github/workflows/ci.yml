@@ -84,7 +84,9 @@ jobs:
           pip install pip-audit bandit
 
       - name: Dependency vulnerability scan
-        run: pip-audit --strict --desc --skip-editable
+        run: |
+          pip freeze --exclude-editable > /tmp/requirements.txt
+          pip-audit --strict --desc -r /tmp/requirements.txt
 
       - name: Code security scan (bandit)
         run: bandit -r src/ -c pyproject.toml -f json -o bandit-report.json || true

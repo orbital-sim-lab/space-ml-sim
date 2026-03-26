@@ -42,7 +42,8 @@ jobs:
       - name: Run security scan
         run: |
           pip install pip-audit bandit
-          pip-audit --strict --desc --skip-editable
+          pip freeze --exclude-editable > /tmp/requirements.txt
+          pip-audit --strict --desc -r /tmp/requirements.txt
           bandit -r src/ -c pyproject.toml -ll
 
   build:
