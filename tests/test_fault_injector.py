@@ -1,6 +1,5 @@
 """Tests for ML fault injection engine."""
 
-
 import pytest
 import torch
 import torch.nn as nn

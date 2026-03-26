@@ -52,9 +52,7 @@ class Satellite(BaseModel):
             update={"power_available_w": power_model.available_power(in_eclipse)}
         )
 
-    def with_thermal_update(
-        self, compute_load_fraction: float, in_eclipse: bool
-    ) -> "Satellite":
+    def with_thermal_update(self, compute_load_fraction: float, in_eclipse: bool) -> "Satellite":
         """Return a new Satellite with updated thermal state.
 
         Args:
@@ -69,9 +67,7 @@ class Satellite(BaseModel):
         temp = thermal.compute_temperature(compute_power, in_eclipse)
         return self.model_copy(update={"temperature_c": temp})
 
-    def with_radiation_tick(
-        self, rad_env: RadiationEnvironment, dt_seconds: float
-    ) -> "Satellite":
+    def with_radiation_tick(self, rad_env: RadiationEnvironment, dt_seconds: float) -> "Satellite":
         """Return a new Satellite after applying radiation effects for dt_seconds.
 
         Samples SEU events from Poisson distribution and accumulates TID.
@@ -118,9 +114,7 @@ class Satellite(BaseModel):
         self, position_km: tuple[float, float, float], in_eclipse: bool
     ) -> "Satellite":
         """Return a new Satellite with updated position and eclipse state."""
-        return self.model_copy(
-            update={"position_km": position_km, "in_eclipse": in_eclipse}
-        )
+        return self.model_copy(update={"position_km": position_km, "in_eclipse": in_eclipse})
 
     @property
     def is_operational(self) -> bool:

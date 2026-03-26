@@ -21,6 +21,7 @@ from space_ml_sim.compute.transformer_fault import TransformerFaultInjector
 # and does NOT require any external model downloads.
 # ---------------------------------------------------------------------------
 
+
 class TinyTransformer(nn.Module):
     def __init__(self):
         super().__init__()
@@ -33,9 +34,7 @@ class TinyTransformer(nn.Module):
         self.output = nn.Linear(32, 10)
 
     def forward(self, x):
-        emb = self.embedding(x) + self.pos_embedding(
-            torch.arange(x.size(1), device=x.device)
-        )
+        emb = self.embedding(x) + self.pos_embedding(torch.arange(x.size(1), device=x.device))
         normed = self.layer_norm1(emb)
         attn_out, _ = self.attn(normed, normed, normed)
         x2 = emb + attn_out
@@ -62,6 +61,7 @@ def injector():
 # Helper
 # ---------------------------------------------------------------------------
 
+
 def _snapshot(model: nn.Module) -> dict[str, torch.Tensor]:
     """Capture a deep copy of all named parameters."""
     return {name: param.data.clone() for name, param in model.named_parameters()}
@@ -80,6 +80,7 @@ def _changed_params(model: nn.Module, snapshot: dict[str, torch.Tensor]) -> set[
 # Tests: vulnerability_profile
 # ---------------------------------------------------------------------------
 
+
 class TestVulnerabilityProfile:
     def test_returns_dict(self, injector, tiny_model):
         profile = injector.vulnerability_profile(tiny_model)
@@ -94,9 +95,7 @@ class TestVulnerabilityProfile:
         valid = {"attention", "layernorm", "embedding", "ffn", "other"}
         profile = injector.vulnerability_profile(tiny_model)
         for name, category in profile.items():
-            assert category in valid, (
-                f"Parameter '{name}' has unknown category '{category}'"
-            )
+            assert category in valid, f"Parameter '{name}' has unknown category '{category}'"
 
     def test_embedding_parameters_classified_as_embedding(self, injector, tiny_model):
         profile = injector.vulnerability_profile(tiny_model)
@@ -137,6 +136,7 @@ class TestVulnerabilityProfile:
 # Tests: inject_attention_faults
 # ---------------------------------------------------------------------------
 
+
 class TestInjectAttentionFaults:
     def test_only_attention_params_modified(self, injector, tiny_model):
         profile = injector.vulnerability_profile(tiny_model)
@@ -146,9 +146,7 @@ class TestInjectAttentionFaults:
 
         changed = _changed_params(tiny_model, snapshot)
         for name in changed:
-            assert profile[name] == "attention", (
-                f"Non-attention parameter '{name}' was modified"
-            )
+            assert profile[name] == "attention", f"Non-attention parameter '{name}' was modified"
 
     def test_non_attention_params_untouched(self, injector, tiny_model):
         snapshot = _snapshot(tiny_model)
@@ -190,6 +188,7 @@ class TestInjectAttentionFaults:
 # Tests: inject_layernorm_faults
 # ---------------------------------------------------------------------------
 
+
 class TestInjectLayernormFaults:
     def test_only_layernorm_params_modified(self, injector, tiny_model):
         profile = injector.vulnerability_profile(tiny_model)
@@ -199,9 +198,7 @@ class TestInjectLayernormFaults:
 
         changed = _changed_params(tiny_model, snapshot)
         for name in changed:
-            assert profile[name] == "layernorm", (
-                f"Non-layernorm parameter '{name}' was modified"
-            )
+            assert profile[name] == "layernorm", f"Non-layernorm parameter '{name}' was modified"
 
     def test_non_layernorm_params_untouched(self, injector, tiny_model):
         snapshot = _snapshot(tiny_model)
@@ -235,6 +232,7 @@ class TestInjectLayernormFaults:
 # Tests: inject_embedding_faults
 # ---------------------------------------------------------------------------
 
+
 class TestInjectEmbeddingFaults:
     def test_only_embedding_params_modified(self, injector, tiny_model):
         profile = injector.vulnerability_profile(tiny_model)
@@ -244,9 +242,7 @@ class TestInjectEmbeddingFaults:
 
         changed = _changed_params(tiny_model, snapshot)
         for name in changed:
-            assert profile[name] == "embedding", (
-                f"Non-embedding parameter '{name}' was modified"
-            )
+            assert profile[name] == "embedding", f"Non-embedding parameter '{name}' was modified"
 
     def test_non_embedding_params_untouched(self, injector, tiny_model):
         snapshot = _snapshot(tiny_model)
@@ -279,6 +275,7 @@ class TestInjectEmbeddingFaults:
 # ---------------------------------------------------------------------------
 # Tests: LayerNorm vulnerability relative to FFN (cascading effect)
 # ---------------------------------------------------------------------------
+
 
 class TestLayerNormVulnerabilityVsFFN:
     """LayerNorm faults cascade through all downstream activations because
@@ -347,6 +344,7 @@ class TestLayerNormVulnerabilityVsFFN:
                 target_name, target_param = ffn_params[0]
                 with torch.no_grad():
                     from space_ml_sim.compute.fault_injector import FaultInjector
+
                     FaultInjector.flip_random_bits(target_param.data, num_faults)
             with torch.no_grad():
                 out_ffn = faulted_ffn(x)
@@ -373,6 +371,7 @@ class TestLayerNormVulnerabilityVsFFN:
 # ---------------------------------------------------------------------------
 # Tests: model with HuggingFace-style naming (q_proj / k_proj / v_proj)
 # ---------------------------------------------------------------------------
+
 
 class HuggingFaceStyleTransformer(nn.Module):
     """Simulates HuggingFace-style parameter names."""
@@ -424,6 +423,7 @@ class TestHuggingFaceNamingConventions:
 # Tests: edge cases and guard rails
 # ---------------------------------------------------------------------------
 
+
 class TestEdgeCases:
     def test_model_with_no_target_params_is_safe(self, injector):
         """inject_layernorm_faults on a model with no layernorm should not crash."""
@@ -457,7 +457,9 @@ class TestEdgeCases:
 # Tests: __init__.py export
 # ---------------------------------------------------------------------------
 
+
 class TestExport:
     def test_importable_from_compute_package(self):
         from space_ml_sim.compute import TransformerFaultInjector as TFI  # noqa: F401
+
         assert TFI is TransformerFaultInjector

@@ -11,6 +11,7 @@ from space_ml_sim.core.clock import SimClock
 # SimClock.tick
 # ---------------------------------------------------------------------------
 
+
 class TestTick:
     def test_tick_advances_time(self):
         clock = SimClock(current_time=0.0, dt_seconds=1.0)
@@ -79,6 +80,7 @@ class TestTick:
 # SimClock.steps_until
 # ---------------------------------------------------------------------------
 
+
 class TestStepsUntil:
     def test_steps_until_future_time(self):
         clock = SimClock(current_time=0.0, dt_seconds=1.0)
@@ -127,6 +129,7 @@ class TestStepsUntil:
 # ---------------------------------------------------------------------------
 # SimClock.iterate
 # ---------------------------------------------------------------------------
+
 
 class TestIterate:
     def test_iterate_yields_correct_count(self):
@@ -201,6 +204,7 @@ class TestIterate:
     def test_iterate_returns_generator(self):
         """iterate() should be a generator (lazy evaluation)."""
         import types
+
         clock = SimClock(current_time=0.0, dt_seconds=1.0)
         result = clock.iterate(duration_seconds=10.0)
         assert isinstance(result, types.GeneratorType)
@@ -209,6 +213,7 @@ class TestIterate:
 # ---------------------------------------------------------------------------
 # SimClock construction and field validation
 # ---------------------------------------------------------------------------
+
 
 class TestSimClockConstruction:
     def test_default_values(self):

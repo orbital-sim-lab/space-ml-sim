@@ -39,6 +39,7 @@ BAD_LINE2 = "2 99999  99.9999 999.9999 9999999 999.9999 999.9999 00.000000000000
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _write_tle_file(entries: list[tuple[str, str, str]], path: str) -> None:
     """Write a standard 3-line TLE file: name / line1 / line2 per entry."""
     with open(path, "w") as fh:
@@ -49,6 +50,7 @@ def _write_tle_file(entries: list[tuple[str, str, str]], path: str) -> None:
 # ---------------------------------------------------------------------------
 # parse_tle
 # ---------------------------------------------------------------------------
+
 
 class TestParseTle:
     """Unit tests for parse_tle(line1, line2) -> OrbitConfig."""
@@ -158,6 +160,7 @@ class TestParseTle:
 # load_tle_file
 # ---------------------------------------------------------------------------
 
+
 class TestLoadTleFile:
     """Unit tests for load_tle_file(path) -> list[OrbitConfig]."""
 
@@ -260,6 +263,7 @@ class TestLoadTleFile:
 # propagate_sgp4
 # ---------------------------------------------------------------------------
 
+
 class TestPropagateSgp4:
     """Unit tests for propagate_sgp4(line1, line2, minutes) -> (x, y, z)."""
 
@@ -331,6 +335,7 @@ class TestPropagateSgp4:
 # ---------------------------------------------------------------------------
 # Constellation.from_tle
 # ---------------------------------------------------------------------------
+
 
 class TestConstellationFromTle:
     """Integration tests for Constellation.from_tle class method."""
@@ -411,6 +416,7 @@ class TestConstellationFromTle:
 # ---------------------------------------------------------------------------
 # Module-level exports
 # ---------------------------------------------------------------------------
+
 
 class TestModuleExports:
     """Verify that parse_tle, load_tle_file, propagate_sgp4 are exported from core."""

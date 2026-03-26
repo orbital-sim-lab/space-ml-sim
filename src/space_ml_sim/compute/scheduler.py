@@ -69,14 +69,8 @@ class InferenceScheduler:
             Dict with availability metrics.
         """
         operational = [s for s in satellites if s.is_operational]
-        powered = [
-            s
-            for s in operational
-            if s.power_available_w >= s.chip_profile.tdp_watts
-        ]
-        within_thermal = [
-            s for s in powered if s.temperature_c <= s.chip_profile.max_temp_c
-        ]
+        powered = [s for s in operational if s.power_available_w >= s.chip_profile.tdp_watts]
+        within_thermal = [s for s in powered if s.temperature_c <= s.chip_profile.max_temp_c]
 
         return {
             "total_satellites": len(satellites),

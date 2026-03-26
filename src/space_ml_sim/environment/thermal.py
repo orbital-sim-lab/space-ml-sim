@@ -25,9 +25,7 @@ class ThermalModel(BaseModel):
     ambient_sun_c: float = Field(default=80.0)
     ambient_eclipse_c: float = Field(default=-40.0)
 
-    def compute_temperature(
-        self, compute_power_watts: float, in_eclipse: bool
-    ) -> float:
+    def compute_temperature(self, compute_power_watts: float, in_eclipse: bool) -> float:
         """Compute steady-state temperature in Celsius.
 
         Args:

@@ -28,12 +28,16 @@ def plot_fault_sweep(
     import plotly.graph_objects as go
 
     # Aggregate by fault_count: mean and std of accuracy
-    grouped = df.groupby("fault_count").agg(
-        acc_mean=("accuracy", "mean"),
-        acc_std=("accuracy", "std"),
-        top5_mean=("top5_accuracy", "mean"),
-        critical_rate=("critical_failure", "mean"),
-    ).reset_index()
+    grouped = (
+        df.groupby("fault_count")
+        .agg(
+            acc_mean=("accuracy", "mean"),
+            acc_std=("accuracy", "std"),
+            top5_mean=("top5_accuracy", "mean"),
+            critical_rate=("critical_failure", "mean"),
+        )
+        .reset_index()
+    )
 
     fig = go.Figure()
 
@@ -112,25 +116,45 @@ def plot_constellation_health(
     )
 
     fig.add_trace(
-        go.Scatter(x=times, y=[m["active_count"] for m in metrics_history],
-                   name="Active", line=dict(color="#00CC96")),
-        row=1, col=1,
+        go.Scatter(
+            x=times,
+            y=[m["active_count"] for m in metrics_history],
+            name="Active",
+            line=dict(color="#00CC96"),
+        ),
+        row=1,
+        col=1,
     )
     fig.add_trace(
-        go.Scatter(x=times, y=[m["degraded_count"] for m in metrics_history],
-                   name="Degraded", line=dict(color="#FFA15A")),
-        row=1, col=1,
+        go.Scatter(
+            x=times,
+            y=[m["degraded_count"] for m in metrics_history],
+            name="Degraded",
+            line=dict(color="#FFA15A"),
+        ),
+        row=1,
+        col=1,
     )
     fig.add_trace(
-        go.Scatter(x=times, y=[m["failed_count"] for m in metrics_history],
-                   name="Failed", line=dict(color="#EF553B")),
-        row=1, col=1,
+        go.Scatter(
+            x=times,
+            y=[m["failed_count"] for m in metrics_history],
+            name="Failed",
+            line=dict(color="#EF553B"),
+        ),
+        row=1,
+        col=1,
     )
 
     fig.add_trace(
-        go.Scatter(x=times, y=[m["avg_temperature_c"] for m in metrics_history],
-                   name="Avg Temp (C)", line=dict(color="#636EFA")),
-        row=2, col=1,
+        go.Scatter(
+            x=times,
+            y=[m["avg_temperature_c"] for m in metrics_history],
+            name="Avg Temp (C)",
+            line=dict(color="#636EFA"),
+        ),
+        row=2,
+        col=1,
     )
 
     fig.update_layout(title=title, template="plotly_white")

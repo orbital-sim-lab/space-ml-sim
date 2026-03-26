@@ -16,12 +16,8 @@ class ChipProfile(BaseModel):
     node_nm: int = Field(gt=0, description="Process node in nanometers")
     tdp_watts: float = Field(gt=0, description="Thermal design power in watts")
     max_temp_c: float = Field(description="Maximum operating temperature in Celsius")
-    seu_cross_section_cm2: float = Field(
-        gt=0, description="SEU cross-section per bit in cm^2"
-    )
-    tid_tolerance_krad: float = Field(
-        gt=0, description="Total ionizing dose tolerance in krad(Si)"
-    )
+    seu_cross_section_cm2: float = Field(gt=0, description="SEU cross-section per bit in cm^2")
+    tid_tolerance_krad: float = Field(gt=0, description="Total ionizing dose tolerance in krad(Si)")
     compute_tops: float = Field(ge=0, description="INT8 TOPS (tera operations per second)")
     memory_bits: int = Field(gt=0, description="Total bits in on-chip memory")
     notes: str = Field(default="", description="Additional notes about the chip")

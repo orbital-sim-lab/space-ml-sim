@@ -11,8 +11,12 @@ from pydantic import BaseModel, Field
 class PowerModel(BaseModel):
     """Satellite power availability model."""
 
-    solar_power_watts: float = Field(default=100_000.0, gt=0, description="Solar array output in watts")
-    battery_power_watts: float = Field(default=10_000.0, gt=0, description="Battery output in watts (eclipse)")
+    solar_power_watts: float = Field(
+        default=100_000.0, gt=0, description="Solar array output in watts"
+    )
+    battery_power_watts: float = Field(
+        default=10_000.0, gt=0, description="Battery output in watts (eclipse)"
+    )
 
     def available_power(self, in_eclipse: bool) -> float:
         """Return available power in watts based on eclipse state.

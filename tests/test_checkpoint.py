@@ -13,6 +13,7 @@ from space_ml_sim.compute.checkpoint import CheckpointManager
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_model(seed: int = 0) -> nn.Linear:
     """Small deterministic linear model for fast testing."""
     torch.manual_seed(seed)
@@ -37,6 +38,7 @@ def _weights_equal(a: nn.Module, b: nn.Module) -> bool:
 # ---------------------------------------------------------------------------
 # save: return value
 # ---------------------------------------------------------------------------
+
 
 class TestSaveReturnValue:
     def test_first_save_returns_zero(self):
@@ -78,6 +80,7 @@ class TestSaveReturnValue:
 # ---------------------------------------------------------------------------
 # restore: correct weights
 # ---------------------------------------------------------------------------
+
 
 class TestRestoreWeights:
     def test_restore_loads_saved_weights(self):
@@ -143,6 +146,7 @@ class TestRestoreWeights:
 # restore with no checkpoints raises IndexError
 # ---------------------------------------------------------------------------
 
+
 class TestRestoreNoCheckpoints:
     def test_raises_index_error_when_empty(self):
         mgr = CheckpointManager()
@@ -162,6 +166,7 @@ class TestRestoreNoCheckpoints:
 # ---------------------------------------------------------------------------
 # Sliding window: max_checkpoints=2 evicts oldest
 # ---------------------------------------------------------------------------
+
 
 class TestSlidingWindow:
     def test_count_does_not_exceed_max(self):
@@ -222,6 +227,7 @@ class TestSlidingWindow:
 # clear
 # ---------------------------------------------------------------------------
 
+
 class TestClear:
     def test_clear_removes_all_checkpoints(self):
         mgr = CheckpointManager()
@@ -250,6 +256,7 @@ class TestClear:
 # count
 # ---------------------------------------------------------------------------
 
+
 class TestCount:
     def test_count_starts_at_zero(self):
         mgr = CheckpointManager()
@@ -273,6 +280,7 @@ class TestCount:
 # ---------------------------------------------------------------------------
 # Restored model produces same output as when saved
 # ---------------------------------------------------------------------------
+
 
 class TestRestoredModelOutput:
     def test_restored_model_matches_saved_output(self):

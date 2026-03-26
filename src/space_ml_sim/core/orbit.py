@@ -23,7 +23,9 @@ class OrbitConfig(BaseModel):
 
     altitude_km: float = Field(gt=0, description="Altitude above Earth surface in km")
     inclination_deg: float = Field(ge=0, le=180, description="Orbital inclination in degrees")
-    raan_deg: float = Field(ge=0, lt=360, description="Right ascension of ascending node in degrees")
+    raan_deg: float = Field(
+        ge=0, lt=360, description="Right ascension of ascending node in degrees"
+    )
     true_anomaly_deg: float = Field(ge=0, lt=360, description="True anomaly in degrees")
 
     @property
@@ -86,9 +88,7 @@ def _keplerian_to_cartesian(
     return (x, y, z), (vx, vy, vz)
 
 
-def _j2_drift_rates(
-    a: float, inc_rad: float, n: float
-) -> tuple[float, float]:
+def _j2_drift_rates(a: float, inc_rad: float, n: float) -> tuple[float, float]:
     """Compute secular J2 drift rates for RAAN and argument of perigee.
 
     Args:
@@ -275,7 +275,9 @@ def sun_synchronous_orbits(
     return configs
 
 
-def is_in_eclipse(position_km: tuple[float, float, float], sun_direction: tuple[float, float, float]) -> bool:
+def is_in_eclipse(
+    position_km: tuple[float, float, float], sun_direction: tuple[float, float, float]
+) -> bool:
     """Check if a satellite is in Earth's shadow using cylindrical shadow model.
 
     Args:

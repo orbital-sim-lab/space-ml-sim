@@ -1,6 +1,5 @@
 """Tests for radiation environment model."""
 
-
 from space_ml_sim.environment.radiation import RadiationEnvironment
 
 

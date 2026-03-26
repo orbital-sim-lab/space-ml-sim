@@ -14,6 +14,7 @@ from space_ml_sim.models.chip_profiles import ChipProfile, RAD5500, TERAFAB_D3
 # Shared fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture()
 def orbit() -> OrbitConfig:
     return OrbitConfig(
@@ -44,6 +45,7 @@ def rad_env() -> RadiationEnvironment:
 # SatelliteState enum
 # ---------------------------------------------------------------------------
 
+
 class TestSatelliteStateEnum:
     def test_nominal_value(self):
         assert SatelliteState.NOMINAL == "nominal"
@@ -65,6 +67,7 @@ class TestSatelliteStateEnum:
 # ---------------------------------------------------------------------------
 # Satellite.with_power_update
 # ---------------------------------------------------------------------------
+
 
 class TestWithPowerUpdate:
     def test_solar_power_when_sunlit(self, satellite: Satellite):
@@ -99,6 +102,7 @@ class TestWithPowerUpdate:
 # ---------------------------------------------------------------------------
 # Satellite.with_thermal_update
 # ---------------------------------------------------------------------------
+
 
 class TestWithThermalUpdate:
     def test_temperature_increases_with_compute_load(self, satellite: Satellite):
@@ -155,12 +159,15 @@ class TestWithThermalUpdate:
 # Satellite.with_radiation_tick
 # ---------------------------------------------------------------------------
 
+
 class TestWithRadiationTick:
     def test_tid_accumulates(self, satellite: Satellite, rad_env: RadiationEnvironment):
         updated = satellite.with_radiation_tick(rad_env, dt_seconds=86400.0)
         assert updated.tid_accumulated_krad > satellite.tid_accumulated_krad
 
-    def test_seu_events_are_non_negative_int(self, satellite: Satellite, rad_env: RadiationEnvironment):
+    def test_seu_events_are_non_negative_int(
+        self, satellite: Satellite, rad_env: RadiationEnvironment
+    ):
         """SEU count is always a non-negative integer."""
         updated = satellite.with_radiation_tick(rad_env, dt_seconds=86400.0)
         assert isinstance(updated.total_seu_events, int)
@@ -263,11 +270,15 @@ class TestWithRadiationTick:
         assert result.state == SatelliteState.FAILED
         assert result.tid_accumulated_krad == sat.tid_accumulated_krad
 
-    def test_returns_new_instance_when_not_failed(self, satellite: Satellite, rad_env: RadiationEnvironment):
+    def test_returns_new_instance_when_not_failed(
+        self, satellite: Satellite, rad_env: RadiationEnvironment
+    ):
         updated = satellite.with_radiation_tick(rad_env, dt_seconds=60.0)
         assert updated is not satellite
 
-    def test_original_unchanged_after_tick(self, satellite: Satellite, rad_env: RadiationEnvironment):
+    def test_original_unchanged_after_tick(
+        self, satellite: Satellite, rad_env: RadiationEnvironment
+    ):
         original_tid = satellite.tid_accumulated_krad
         original_seus = satellite.total_seu_events
         satellite.with_radiation_tick(rad_env, dt_seconds=86400.0)
@@ -291,7 +302,9 @@ class TestWithRadiationTick:
         updated = sat.with_radiation_tick(rad_env, dt_seconds=86400.0)
         assert updated.state == SatelliteState.NOMINAL
 
-    def test_seu_count_is_non_negative_int(self, satellite: Satellite, rad_env: RadiationEnvironment):
+    def test_seu_count_is_non_negative_int(
+        self, satellite: Satellite, rad_env: RadiationEnvironment
+    ):
         updated = satellite.with_radiation_tick(rad_env, dt_seconds=1.0)
         assert isinstance(updated.total_seu_events, int)
         assert updated.total_seu_events >= 0
@@ -300,6 +313,7 @@ class TestWithRadiationTick:
 # ---------------------------------------------------------------------------
 # Satellite.with_position
 # ---------------------------------------------------------------------------
+
 
 class TestWithPosition:
     def test_position_updated(self, satellite: Satellite):
@@ -340,6 +354,7 @@ class TestWithPosition:
 # Satellite.is_operational
 # ---------------------------------------------------------------------------
 
+
 class TestIsOperational:
     def test_nominal_is_operational(self, satellite: Satellite):
         assert satellite.is_operational is True
@@ -370,6 +385,7 @@ class TestIsOperational:
 # Immutability: each with_* returns a new Satellite, original unchanged
 # ---------------------------------------------------------------------------
 
+
 class TestImmutability:
     """Verify that no with_* method mutates the original Satellite."""
 
@@ -383,7 +399,9 @@ class TestImmutability:
         satellite.with_thermal_update(compute_load_fraction=0.9, in_eclipse=False)
         assert satellite.model_dump() == snapshot
 
-    def test_with_radiation_tick_immutable(self, satellite: Satellite, rad_env: RadiationEnvironment):
+    def test_with_radiation_tick_immutable(
+        self, satellite: Satellite, rad_env: RadiationEnvironment
+    ):
         snapshot = satellite.model_dump()
         satellite.with_radiation_tick(rad_env, dt_seconds=3600.0)
         assert satellite.model_dump() == snapshot
@@ -399,8 +417,7 @@ class TestImmutability:
         """Chaining multiple updates never changes the starting satellite."""
         snapshot = satellite.model_dump()
         (
-            satellite
-            .with_power_update(in_eclipse=False)
+            satellite.with_power_update(in_eclipse=False)
             .with_thermal_update(compute_load_fraction=0.5, in_eclipse=False)
             .with_radiation_tick(rad_env, dt_seconds=60.0)
             .with_position((1000.0, 0.0, 0.0), in_eclipse=False)

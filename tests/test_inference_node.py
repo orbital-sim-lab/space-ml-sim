@@ -46,6 +46,7 @@ def _make_node(model: nn.Module | None = None, chip: ChipProfile | None = None) 
 # run_inference: predictions length
 # ---------------------------------------------------------------------------
 
+
 class TestRunInferencePredictionsLength:
     def test_single_sample_returns_one_prediction(self):
         node = _make_node()
@@ -123,14 +124,18 @@ class TestRunInferencePredictionsLength:
 # can_run: True when power and temperature within limits
 # ---------------------------------------------------------------------------
 
+
 class TestCanRunTrue:
     def test_exact_tdp_and_max_temp_returns_true(self):
         """Boundary values: power == TDP and temp == max_temp → True."""
         node = _make_node()
-        assert node.can_run(
-            power_available_w=_CHIP.tdp_watts,
-            temperature_c=_CHIP.max_temp_c,
-        ) is True
+        assert (
+            node.can_run(
+                power_available_w=_CHIP.tdp_watts,
+                temperature_c=_CHIP.max_temp_c,
+            )
+            is True
+        )
 
     def test_excess_power_and_cool_temp_returns_true(self):
         node = _make_node()
@@ -155,6 +160,7 @@ class TestCanRunTrue:
 # can_run: False when power too low
 # ---------------------------------------------------------------------------
 
+
 class TestCanRunFalseLowPower:
     def test_zero_power_returns_false(self):
         node = _make_node()
@@ -162,10 +168,13 @@ class TestCanRunFalseLowPower:
 
     def test_power_just_below_tdp_returns_false(self):
         node = _make_node()
-        assert node.can_run(
-            power_available_w=_CHIP.tdp_watts - 0.01,
-            temperature_c=25.0,
-        ) is False
+        assert (
+            node.can_run(
+                power_available_w=_CHIP.tdp_watts - 0.01,
+                temperature_c=25.0,
+            )
+            is False
+        )
 
     def test_negative_power_returns_false(self):
         node = _make_node()
@@ -173,23 +182,30 @@ class TestCanRunFalseLowPower:
 
     def test_power_one_watt_below_tdp_returns_false(self):
         node = _make_node()
-        assert node.can_run(
-            power_available_w=_CHIP.tdp_watts - 1.0,
-            temperature_c=0.0,
-        ) is False
+        assert (
+            node.can_run(
+                power_available_w=_CHIP.tdp_watts - 1.0,
+                temperature_c=0.0,
+            )
+            is False
+        )
 
 
 # ---------------------------------------------------------------------------
 # can_run: False when temperature too high
 # ---------------------------------------------------------------------------
 
+
 class TestCanRunFalseHighTemp:
     def test_temperature_just_above_max_returns_false(self):
         node = _make_node()
-        assert node.can_run(
-            power_available_w=100.0,
-            temperature_c=_CHIP.max_temp_c + 0.01,
-        ) is False
+        assert (
+            node.can_run(
+                power_available_w=100.0,
+                temperature_c=_CHIP.max_temp_c + 0.01,
+            )
+            is False
+        )
 
     def test_very_high_temperature_returns_false(self):
         node = _make_node()
@@ -201,15 +217,19 @@ class TestCanRunFalseHighTemp:
 
     def test_good_power_but_one_degree_over_max_returns_false(self):
         node = _make_node()
-        assert node.can_run(
-            power_available_w=_CHIP.tdp_watts * 2,
-            temperature_c=_CHIP.max_temp_c + 1.0,
-        ) is False
+        assert (
+            node.can_run(
+                power_available_w=_CHIP.tdp_watts * 2,
+                temperature_c=_CHIP.max_temp_c + 1.0,
+            )
+            is False
+        )
 
 
 # ---------------------------------------------------------------------------
 # can_run: chip profile boundary variations
 # ---------------------------------------------------------------------------
+
 
 class TestCanRunWithDifferentChips:
     def _chip_with(self, tdp: float, max_temp: float) -> ChipProfile:

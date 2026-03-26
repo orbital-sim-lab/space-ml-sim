@@ -24,6 +24,7 @@ _MIN_PER_DAY = 1440.0
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+
 def _mean_anomaly_to_true_anomaly(mean_anomaly_rad: float, eccentricity: float) -> float:
     """Convert mean anomaly M to true anomaly nu using Kepler's equation.
 
@@ -83,13 +84,9 @@ def _build_satrec(line1: str, line2: str):
         raise ValueError("TLE lines must not be empty.")
 
     if not line1.startswith("1"):
-        raise ValueError(
-            f"TLE line 1 must start with '1', got: {line1[:10]!r}"
-        )
+        raise ValueError(f"TLE line 1 must start with '1', got: {line1[:10]!r}")
     if not line2.startswith("2"):
-        raise ValueError(
-            f"TLE line 2 must start with '2', got: {line2[:10]!r}"
-        )
+        raise ValueError(f"TLE line 2 must start with '2', got: {line2[:10]!r}")
 
     try:
         sat = Satrec.twoline2rv(line1, line2, WGS72)
@@ -98,9 +95,7 @@ def _build_satrec(line1: str, line2: str):
 
     # sgp4 error code 0 means success; non-zero indicates initialisation failure.
     if getattr(sat, "error", 0) != 0:
-        raise ValueError(
-            f"sgp4 initialisation returned error code {sat.error} for TLE: {line1!r}"
-        )
+        raise ValueError(f"sgp4 initialisation returned error code {sat.error} for TLE: {line1!r}")
 
     return sat
 
@@ -108,6 +103,7 @@ def _build_satrec(line1: str, line2: str):
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def parse_tle(line1: str, line2: str) -> OrbitConfig:
     """Parse a TLE two-line element set and convert to OrbitConfig.
@@ -136,9 +132,7 @@ def parse_tle(line1: str, line2: str) -> OrbitConfig:
     # Convert to rad/s by dividing by 60.
     n_rad_per_min: float = getattr(sat, "no_kozai", None) or getattr(sat, "no", 0.0)
     if n_rad_per_min == 0.0:
-        raise ValueError(
-            "Could not retrieve mean motion from Satrec (no_kozai / no both zero)."
-        )
+        raise ValueError("Could not retrieve mean motion from Satrec (no_kozai / no both zero).")
 
     n_rad_per_sec = n_rad_per_min / 60.0
 
@@ -264,8 +258,6 @@ def propagate_sgp4(
         raise ValueError(f"sgp4 propagation failed: {exc}") from exc
 
     if e != 0:
-        raise ValueError(
-            f"sgp4 propagation returned error code {e} at t={minutes_from_epoch} min."
-        )
+        raise ValueError(f"sgp4 propagation returned error code {e} at t={minutes_from_epoch} min.")
 
     return (float(r[0]), float(r[1]), float(r[2]))

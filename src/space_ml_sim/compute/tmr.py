@@ -138,9 +138,7 @@ class TMRWrapper:
         if self.strategy == "checkpoint_rollback":
             self.checkpoint = copy.deepcopy(self.model.state_dict())
 
-    def inject_faults_to_replicas(
-        self, injector: FaultInjector, faults_per_replica: int
-    ) -> None:
+    def inject_faults_to_replicas(self, injector: FaultInjector, faults_per_replica: int) -> None:
         """Inject independent faults into each TMR replica.
 
         For selective TMR with configured protection, only injects faults
@@ -156,9 +154,7 @@ class TMRWrapper:
 
         if self.strategy == "selective_tmr" and self.protected_layers:
             for replica in self.replicas:
-                self._inject_to_protected_only(
-                    replica, injector, faults_per_replica
-                )
+                self._inject_to_protected_only(replica, injector, faults_per_replica)
         else:
             for replica in self.replicas:
                 injector.inject_weight_faults(replica, num_faults=faults_per_replica)
@@ -232,9 +228,7 @@ class TMRWrapper:
                 test_model = copy.deepcopy(baseline_model)
                 test_params = dict(test_model.named_parameters())
                 with torch.no_grad():
-                    FaultInjector.flip_random_bits(
-                        test_params[name].data, faults_per_layer
-                    )
+                    FaultInjector.flip_random_bits(test_params[name].data, faults_per_layer)
                 acc, _ = _evaluate_model(test_model, dataloader)
                 drops.append(baseline_acc - acc)
 

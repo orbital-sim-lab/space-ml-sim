@@ -146,9 +146,7 @@ class TestJ2Perturbations:
         cos(53 deg) > 0, so dΩ/dt is negative → RAAN drifts in negative direction.
         """
         import math
-        from space_ml_sim.core.orbit import (
-            R_EARTH_KM, J2
-        )
+        from space_ml_sim.core.orbit import R_EARTH_KM, J2
 
         config = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=180, true_anomaly_deg=0)
         a = config.semi_major_axis_km
@@ -170,9 +168,7 @@ class TestJ2Perturbations:
     def test_j2_raan_drift_magnitude(self):
         """At 550 km, 53 deg inclination, RAAN drift should be approx -5 to -7 deg/day."""
         import math
-        from space_ml_sim.core.orbit import (
-            R_EARTH_KM, J2
-        )
+        from space_ml_sim.core.orbit import R_EARTH_KM, J2
 
         config = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
         a = config.semi_major_axis_km
@@ -205,6 +201,7 @@ class TestJ2Perturbations:
             n = config.mean_motion_rad_per_sec
             nu_rad = nu0_rad + n * t
             from space_ml_sim.core.orbit import _keplerian_to_cartesian
+
             expected_pos, _ = _keplerian_to_cartesian(a, inc_rad, raan_rad, nu_rad)
 
             for got, exp in zip(pos_no_j2, expected_pos):
@@ -221,14 +218,12 @@ class TestJ2Perturbations:
         so the drift rate should be close to +0.9856 deg/day.
         """
         import math
-        from space_ml_sim.core.orbit import (
-            MU_EARTH_KM3_S2, R_EARTH_KM, J2, _sso_inclination_deg
-        )
+        from space_ml_sim.core.orbit import MU_EARTH_KM3_S2, R_EARTH_KM, J2, _sso_inclination_deg
 
         altitude_km = 550.0
         sso_inc_deg = _sso_inclination_deg(altitude_km)
         a = R_EARTH_KM + altitude_km
-        n = math.sqrt(MU_EARTH_KM3_S2 / a ** 3)
+        n = math.sqrt(MU_EARTH_KM3_S2 / a**3)
         inc_rad = math.radians(sso_inc_deg)
 
         d_raan_dt_rad_s = -1.5 * n * J2 * (R_EARTH_KM / a) ** 2 * math.cos(inc_rad)

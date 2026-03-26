@@ -104,9 +104,7 @@ class Constellation:
             for i, orbit in enumerate(orbits)
         ]
         inc = orbits[0].inclination_deg if orbits else 98.0
-        env = rad_env or RadiationEnvironment(
-            altitude_km=altitude_km, inclination_deg=inc
-        )
+        env = rad_env or RadiationEnvironment(altitude_km=altitude_km, inclination_deg=inc)
         return cls(satellites=satellites, rad_env=env)
 
     def step(
@@ -170,9 +168,7 @@ class Constellation:
             "total_seus": total_seus,
         }
 
-    def get_isl_pairs(
-        self, max_distance_km: float = 5000.0
-    ) -> list[tuple[str, str, float]]:
+    def get_isl_pairs(self, max_distance_km: float = 5000.0) -> list[tuple[str, str, float]]:
         """Find satellite pairs within inter-satellite link range.
 
         Args:

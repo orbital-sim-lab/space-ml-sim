@@ -152,7 +152,9 @@ class TestReliabilityMetricsFromSatellites:
         assert metrics.mean_tid_krad == 0.0
 
     def test_single_satellite(self):
-        satellites = [_make_satellite("sat-1", SatelliteState.DEGRADED, seu_events=7, tid_krad=30.0)]
+        satellites = [
+            _make_satellite("sat-1", SatelliteState.DEGRADED, seu_events=7, tid_krad=30.0)
+        ]
         metrics = ReliabilityMetrics.from_satellites(satellites)
 
         assert metrics.total_satellites == 1
@@ -236,9 +238,9 @@ class TestPerformanceMetricsFromSatellites:
     def test_total_tops_sums_all_satellites(self):
         """total_tops sums compute_tops across all satellites, regardless of state."""
         satellites = [
-            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),   # 5 TOPS
+            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),  # 5 TOPS
             _make_satellite("sat-2", SatelliteState.DEGRADED, chip=CHIP_B),  # 10 TOPS
-            _make_satellite("sat-3", SatelliteState.FAILED, chip=CHIP_A),    # 5 TOPS
+            _make_satellite("sat-3", SatelliteState.FAILED, chip=CHIP_A),  # 5 TOPS
         ]
         metrics = PerformanceMetrics.from_satellites(satellites)
 
@@ -247,9 +249,11 @@ class TestPerformanceMetricsFromSatellites:
     def test_active_tops_sums_operational_satellites_only(self):
         """active_tops excludes failed satellites (only nominal and degraded)."""
         satellites = [
-            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),   # 5 TOPS — operational
+            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),  # 5 TOPS — operational
             _make_satellite("sat-2", SatelliteState.DEGRADED, chip=CHIP_B),  # 10 TOPS — operational
-            _make_satellite("sat-3", SatelliteState.FAILED, chip=CHIP_A),    # 5 TOPS — not operational
+            _make_satellite(
+                "sat-3", SatelliteState.FAILED, chip=CHIP_A
+            ),  # 5 TOPS — not operational
         ]
         metrics = PerformanceMetrics.from_satellites(satellites)
 
@@ -268,7 +272,7 @@ class TestPerformanceMetricsFromSatellites:
     def test_tops_per_watt_calculated_from_active_only(self):
         """tops_per_watt = active_tops / active_power_watts."""
         satellites = [
-            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),   # 5 TOPS, 10W
+            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),  # 5 TOPS, 10W
         ]
         metrics = PerformanceMetrics.from_satellites(satellites)
 
@@ -278,8 +282,8 @@ class TestPerformanceMetricsFromSatellites:
     def test_total_power_watts_sums_all_satellites(self):
         """total_power_watts sums tdp_watts across all satellites."""
         satellites = [
-            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),   # 10W
-            _make_satellite("sat-2", SatelliteState.FAILED, chip=CHIP_B),    # 20W
+            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),  # 10W
+            _make_satellite("sat-2", SatelliteState.FAILED, chip=CHIP_B),  # 20W
         ]
         metrics = PerformanceMetrics.from_satellites(satellites)
 
@@ -288,8 +292,8 @@ class TestPerformanceMetricsFromSatellites:
     def test_active_power_watts_sums_operational_only(self):
         """active_power_watts excludes failed satellites."""
         satellites = [
-            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),   # 10W — operational
-            _make_satellite("sat-2", SatelliteState.FAILED, chip=CHIP_B),    # 20W — not operational
+            _make_satellite("sat-1", SatelliteState.NOMINAL, chip=CHIP_A),  # 10W — operational
+            _make_satellite("sat-2", SatelliteState.FAILED, chip=CHIP_B),  # 20W — not operational
         ]
         metrics = PerformanceMetrics.from_satellites(satellites)
 

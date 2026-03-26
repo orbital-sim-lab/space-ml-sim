@@ -13,8 +13,11 @@ class TestConstellationStep:
     def test_satellites_move_after_step(self):
         """After stepping, satellite positions must differ from initial."""
         constellation = Constellation.walker_delta(
-            num_planes=2, sats_per_plane=2, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=2,
+            sats_per_plane=2,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         initial_positions = [sat.position_km for sat in constellation.satellites]
 
@@ -37,8 +40,11 @@ class TestConstellationStep:
         that by comparing positions across two different time windows.
         """
         constellation = Constellation.walker_delta(
-            num_planes=1, sats_per_plane=1, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=1,
+            sats_per_plane=1,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         # Run 5 steps to get past initial state
         for _ in range(5):
@@ -59,8 +65,11 @@ class TestConstellationStep:
     def test_positions_differ_between_satellites(self):
         """Different satellites in different planes should have different positions."""
         constellation = Constellation.walker_delta(
-            num_planes=2, sats_per_plane=2, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=2,
+            sats_per_plane=2,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         constellation.step(dt_seconds=60.0)
 
@@ -72,8 +81,11 @@ class TestConstellationStep:
     def test_step_returns_valid_metrics(self):
         """step() should return a metrics dict with all expected keys."""
         constellation = Constellation.walker_delta(
-            num_planes=2, sats_per_plane=2, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=2,
+            sats_per_plane=2,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         metrics = constellation.step(dt_seconds=60.0)
 
@@ -89,8 +101,11 @@ class TestConstellationStep:
     def test_multiple_steps_accumulate_time(self):
         """sim_time should accumulate across multiple steps."""
         constellation = Constellation.walker_delta(
-            num_planes=1, sats_per_plane=2, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=1,
+            sats_per_plane=2,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         constellation.step(dt_seconds=30.0)
         metrics = constellation.step(dt_seconds=30.0)
@@ -99,8 +114,11 @@ class TestConstellationStep:
     def test_satellite_returns_near_start_after_full_orbit(self):
         """After one orbital period, satellite should be near starting position."""
         constellation = Constellation.walker_delta(
-            num_planes=1, sats_per_plane=1, altitude_km=550,
-            inclination_deg=53, chip_profile=TERAFAB_D3,
+            num_planes=1,
+            sats_per_plane=1,
+            altitude_km=550,
+            inclination_deg=53,
+            chip_profile=TERAFAB_D3,
         )
         # Get initial position after first step
         constellation.step(dt_seconds=60.0)
@@ -116,4 +134,6 @@ class TestConstellationStep:
         dist = math.sqrt(sum((a - b) ** 2 for a, b in zip(pos_after_1min, pos_after_orbit)))
         # Tolerance is large because discrete 60s steps don't land exactly on the period.
         # At ~7.5 km/s orbital velocity, a 60s step error = ~450km position error.
-        assert dist < 1000, f"Satellite didn't return near start after full orbit: dist={dist:.1f}km"
+        assert dist < 1000, (
+            f"Satellite didn't return near start after full orbit: dist={dist:.1f}km"
+        )

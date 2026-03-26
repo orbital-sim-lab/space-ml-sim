@@ -64,6 +64,7 @@ _POWER_THRESHOLD = _DEFAULT_CHIP.tdp_watts * (1 + _SCHEDULER.power_margin_fracti
 # select_nodes: filtering
 # ---------------------------------------------------------------------------
 
+
 class TestSelectNodesFiltering:
     def test_filters_out_failed_satellites(self):
         sats = [
@@ -105,18 +106,12 @@ class TestSelectNodesFiltering:
         assert selected == []
 
     def test_all_failed_returns_empty(self):
-        sats = [
-            _make_satellite(f"failed-{i}", state=SatelliteState.FAILED)
-            for i in range(5)
-        ]
+        sats = [_make_satellite(f"failed-{i}", state=SatelliteState.FAILED) for i in range(5)]
         selected = _SCHEDULER.select_nodes(sats, num_needed=5)
         assert selected == []
 
     def test_all_underpowered_returns_empty(self):
-        sats = [
-            _make_satellite(f"sat-{i}", power_available_w=0.5)
-            for i in range(4)
-        ]
+        sats = [_make_satellite(f"sat-{i}", power_available_w=0.5) for i in range(4)]
         selected = _SCHEDULER.select_nodes(sats, num_needed=4)
         assert selected == []
 
@@ -124,6 +119,7 @@ class TestSelectNodesFiltering:
 # ---------------------------------------------------------------------------
 # select_nodes: num_needed cap
 # ---------------------------------------------------------------------------
+
 
 class TestSelectNodesNumNeeded:
     def test_returns_at_most_num_needed(self):
@@ -145,6 +141,7 @@ class TestSelectNodesNumNeeded:
 # ---------------------------------------------------------------------------
 # select_nodes: ranking — nominal before degraded
 # ---------------------------------------------------------------------------
+
 
 class TestSelectNodesRankingNominalBeforeDegraded:
     def test_nominal_preferred_over_degraded(self):
@@ -183,6 +180,7 @@ class TestSelectNodesRankingNominalBeforeDegraded:
 # select_nodes: ranking — cooler satellites preferred
 # ---------------------------------------------------------------------------
 
+
 class TestSelectNodesRankingCooler:
     def test_cooler_satellite_ranked_first_when_same_state(self):
         sats = [
@@ -194,10 +192,7 @@ class TestSelectNodesRankingCooler:
 
     def test_coolest_three_selected_from_five(self):
         temps = [50.0, 10.0, 90.0, 30.0, 70.0]
-        sats = [
-            _make_satellite(f"sat-{i}", temperature_c=t)
-            for i, t in enumerate(temps)
-        ]
+        sats = [_make_satellite(f"sat-{i}", temperature_c=t) for i, t in enumerate(temps)]
         selected = _SCHEDULER.select_nodes(sats, num_needed=3)
         selected_temps = sorted(s.temperature_c for s in selected)
         assert selected_temps == [10.0, 30.0, 50.0]
@@ -224,6 +219,7 @@ class TestSelectNodesRankingCooler:
 # schedule_summary
 # ---------------------------------------------------------------------------
 
+
 class TestScheduleSummary:
     def _make_constellation(self) -> list[Satellite]:
         """Build a known constellation for predictable summary assertions.
@@ -237,12 +233,24 @@ class TestScheduleSummary:
 
         TDP = 10 W, max_temp = 100°C.
         """
-        ready_1 = _make_satellite("ready-1", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=50.0)
-        ready_2 = _make_satellite("ready-2", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=60.0)
-        ready_3 = _make_satellite("ready-3", state=SatelliteState.DEGRADED, power_available_w=15.0, temperature_c=70.0)
-        low_pwr = _make_satellite("low-pwr", state=SatelliteState.NOMINAL, power_available_w=5.0, temperature_c=40.0)
-        failed  = _make_satellite("failed-1", state=SatelliteState.FAILED, power_available_w=15.0, temperature_c=30.0)
-        hot_sat = _make_satellite("hot-sat", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=110.0)
+        ready_1 = _make_satellite(
+            "ready-1", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=50.0
+        )
+        ready_2 = _make_satellite(
+            "ready-2", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=60.0
+        )
+        ready_3 = _make_satellite(
+            "ready-3", state=SatelliteState.DEGRADED, power_available_w=15.0, temperature_c=70.0
+        )
+        low_pwr = _make_satellite(
+            "low-pwr", state=SatelliteState.NOMINAL, power_available_w=5.0, temperature_c=40.0
+        )
+        failed = _make_satellite(
+            "failed-1", state=SatelliteState.FAILED, power_available_w=15.0, temperature_c=30.0
+        )
+        hot_sat = _make_satellite(
+            "hot-sat", state=SatelliteState.NOMINAL, power_available_w=15.0, temperature_c=110.0
+        )
         return [ready_1, ready_2, ready_3, low_pwr, failed, hot_sat]
 
     def test_total_satellites_count(self):

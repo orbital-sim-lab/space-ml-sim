@@ -86,7 +86,7 @@ _FFN_KEYWORDS: Final[tuple[str, ...]] = (
 
 # Subset of attention keywords that specifically identify Q/K/V (not output proj)
 _QKV_KEYWORDS: Final[tuple[str, ...]] = (
-    "in_proj",   # nn.MultiheadAttention combines Q/K/V
+    "in_proj",  # nn.MultiheadAttention combines Q/K/V
     "q_proj",
     "k_proj",
     "v_proj",
@@ -98,6 +98,7 @@ _VALID_TARGETS: Final[frozenset[str]] = frozenset({"qkv", "all"})
 # ---------------------------------------------------------------------------
 # Helper: classify a single parameter name
 # ---------------------------------------------------------------------------
+
 
 def _classify_param(name: str) -> str:
     """Return the vulnerability category for a parameter name.
@@ -136,6 +137,7 @@ def _classify_param(name: str) -> str:
 # Main class
 # ---------------------------------------------------------------------------
 
+
 class TransformerFaultInjector:
     """Inject radiation-modeled faults targeting transformer-specific components.
 
@@ -163,10 +165,7 @@ class TransformerFaultInjector:
         Raises:
             AttributeError: If *model* does not expose ``named_parameters()``.
         """
-        return {
-            name: _classify_param(name)
-            for name, _ in model.named_parameters()
-        }
+        return {name: _classify_param(name) for name, _ in model.named_parameters()}
 
     def inject_attention_faults(
         self,
@@ -193,9 +192,7 @@ class TransformerFaultInjector:
         """
         self._validate_num_faults(num_faults)
         if target not in _VALID_TARGETS:
-            raise ValueError(
-                f"Invalid target '{target}'. Must be one of {sorted(_VALID_TARGETS)}."
-            )
+            raise ValueError(f"Invalid target '{target}'. Must be one of {sorted(_VALID_TARGETS)}.")
 
         if target == "qkv":
             params = self._select_params(model, category="attention", extra_filter=_QKV_KEYWORDS)
@@ -257,9 +254,7 @@ class TransformerFaultInjector:
     @staticmethod
     def _validate_num_faults(num_faults: int) -> None:
         if num_faults < 0:
-            raise ValueError(
-                f"num_faults must be >= 0, got {num_faults}."
-            )
+            raise ValueError(f"num_faults must be >= 0, got {num_faults}.")
 
     def _select_params(
         self,
