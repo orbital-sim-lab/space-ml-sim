@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,12 +26,25 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e ".[dev]"
-          pip install torchvision
+          pip install torchvision pytest-cov
 
-      - name: Run tests
-        run: python -m pytest tests/ -v
+      - name: Run tests with coverage
+        run: |
+          python -m pytest tests/ -v \
+            --cov=space_ml_sim \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-fail-under=80
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
 
   lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
 
     steps:
@@ -50,3 +64,141 @@ jobs:
 
       - name: Check formatting
         run: ruff format --check src/ tests/
+
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project and security tools
+        run: |
+          pip install -e ".[dev]"
+          pip install pip-audit bandit
+
+      - name: Dependency vulnerability scan
+        run: pip-audit --strict --desc
+
+      - name: Code security scan (bandit)
+        run: bandit -r src/ -c pyproject.toml -f json -o bandit-report.json || true
+
+      - name: Check bandit results
+        run: |
+          pip install bandit
+          bandit -r src/ -c pyproject.toml -ll
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+          if-no-files-found: ignore
+
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project and license tool
+        run: |
+          pip install -e .
+          pip install pip-licenses
+
+      - name: Check dependency licenses
+        run: |
+          pip-licenses --format=table --with-license-file --no-license-path \
+            --fail-on="GNU General Public License v2 (GPLv2);GNU General Public License v3 (GPLv3)" \
+            --allow-only="MIT;BSD License;BSD-2-Clause;BSD-3-Clause;Apache Software License;ISC License (ISCL);Python Software Foundation License;Mozilla Public License 2.0 (MPL 2.0);The Unlicense (Unlicense);Public Domain;HPND;Historical Permission Notice and Disclaimer (HPND)" \
+            || echo "::warning::Some dependencies have non-standard licenses. Review pip-licenses output above."
+
+  benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install torchvision
+
+      - name: Run performance benchmarks
+        run: |
+          python -c "
+          import time, json, copy, torch, torch.nn as nn
+          from space_ml_sim.compute.fault_injector import FaultInjector
+          from space_ml_sim.environment.radiation import RadiationEnvironment
+          from space_ml_sim.models.chip_profiles import TERAFAB_D3
+          from space_ml_sim.core import Constellation
+
+          results = {}
+
+          # Benchmark 1: Fault injection speed (1000 faults into a small model)
+          model = nn.Sequential(nn.Linear(512, 512), nn.ReLU(), nn.Linear(512, 10))
+          injector = FaultInjector(RadiationEnvironment.leo_500km(), TERAFAB_D3)
+          start = time.perf_counter()
+          for _ in range(50):
+              m = copy.deepcopy(model)
+              injector.inject_weight_faults(m, num_faults=1000)
+          fault_time = (time.perf_counter() - start) / 50
+          results['fault_injection_1k_ms'] = round(fault_time * 1000, 2)
+
+          # Benchmark 2: Constellation step (100 sats, 1 step)
+          c = Constellation.walker_delta(10, 10, 550, 53, TERAFAB_D3)
+          start = time.perf_counter()
+          for _ in range(10):
+              c.step(dt_seconds=60.0)
+          step_time = (time.perf_counter() - start) / 10
+          results['constellation_step_100sats_ms'] = round(step_time * 1000, 2)
+
+          # Benchmark 3: Orbit propagation (1 orbit, 1s steps)
+          from space_ml_sim.core.orbit import OrbitConfig, propagate
+          config = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
+          start = time.perf_counter()
+          propagate(config, duration_minutes=95, step_seconds=1.0)
+          prop_time = time.perf_counter() - start
+          results['propagate_1orbit_1s_steps_ms'] = round(prop_time * 1000, 2)
+
+          print('=== BENCHMARK RESULTS ===')
+          for k, v in results.items():
+              print(f'{k}: {v} ms')
+
+          # Write results for comparison
+          with open('benchmark-results.json', 'w') as f:
+              json.dump(results, f, indent=2)
+
+          # Fail if any benchmark is unreasonably slow
+          assert results['fault_injection_1k_ms'] < 500, f\"Fault injection too slow: {results['fault_injection_1k_ms']}ms\"
+          assert results['constellation_step_100sats_ms'] < 1000, f\"Constellation step too slow: {results['constellation_step_100sats_ms']}ms\"
+          assert results['propagate_1orbit_1s_steps_ms'] < 2000, f\"Propagation too slow: {results['propagate_1orbit_1s_steps_ms']}ms\"
+          print('All benchmarks within limits.')
+          "
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark-results.json

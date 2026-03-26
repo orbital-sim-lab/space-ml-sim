@@ -142,13 +142,26 @@ space_ml_sim/
 
 ---
 
-## Tests
+## Quality & Security
 
-395 tests, all passing:
+Every PR is automatically checked by CI before merge:
+
+| Check | What it does |
+|-------|-------------|
+| **Tests + Coverage** | 395 tests, 80% minimum coverage enforced |
+| **Lint & Format** | `ruff check` + `ruff format` |
+| **Security Scan** | `pip-audit` (dependency CVEs) + `bandit` (code security) |
+| **License Compliance** | Verifies all dependencies are AGPL-compatible |
+| **Performance Benchmarks** | Fault injection, constellation step, and orbit propagation speed gates |
+| **Branch Protection** | PRs require passing CI + 1 review before merge |
+| **Dependabot** | Weekly automated dependency updates |
+| **Pre-commit Hooks** | Local checks: ruff, bandit, secret detection, conventional commits |
 
 ```bash
-pip install -e ".[dev]"
-pytest tests/ -v
+# Run all checks locally
+pytest tests/ -v --cov=space_ml_sim --cov-fail-under=80
+ruff check src/ tests/ && ruff format --check src/ tests/
+bandit -r src/ -c pyproject.toml -ll
 ```
 
 ---
@@ -165,20 +178,15 @@ pytest tests/ -v
 
 ## Contributing
 
-Contributions welcome. Please:
-
-1. Fork the repo
-2. Create a feature branch
-3. Write tests (pytest, 80%+ coverage)
-4. Submit a PR
-
-By contributing, you agree to the [Contributor License Agreement](COMMERCIAL_LICENSE.md#contributor-license-agreement).
+Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, standards, and CLA.
 
 **Focus areas:**
 - More realistic radiation models (AP-9/AE-9 integration)
 - Additional chip profiles (Jetson Orin, Versal AI Edge)
 - Ground station downlink scheduling
 - Distributed inference simulation across ISL links
+
+For security vulnerabilities, see [SECURITY.md](SECURITY.md).
 
 ---
 

@@ -9,7 +9,45 @@ permissions:
   id-token: write
 
 jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install torchvision pytest-cov
+
+      - name: Verify tag matches pyproject.toml version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          TOML_VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ "$TAG_VERSION" != "$TOML_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match pyproject.toml ($TOML_VERSION)"
+            exit 1
+          fi
+          echo "Version match: $TAG_VERSION"
+
+      - name: Run full test suite
+        run: python -m pytest tests/ -v --cov=space_ml_sim --cov-fail-under=80
+
+      - name: Run security scan
+        run: |
+          pip install pip-audit bandit
+          pip-audit --strict --desc
+          bandit -r src/ -c pyproject.toml -ll
+
   build:
+    name: Build Package
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +70,7 @@ jobs:
           path: dist/
 
   publish:
+    name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
     environment: pypi
