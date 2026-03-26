@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "space-ml-sim"
-version = "0.1.0"
+version = "0.2.0"
 description = "Simulation framework for AI inference on orbital satellite constellations"
 readme = "README.md"
-license = "Apache-2.0"
+license = "AGPL-3.0-or-later"
 requires-python = ">=3.11"
 authors = [{ name = "space-ml-sim contributors" }]
 keywords = ["space", "satellite", "AI", "simulation", "radiation", "fault-tolerance"]
