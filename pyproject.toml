@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "space-ml-sim"
+version = "0.1.0"
+description = "Simulation framework for AI inference on orbital satellite constellations"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+authors = [{ name = "space-ml-sim contributors" }]
+keywords = ["space", "satellite", "AI", "simulation", "radiation", "fault-tolerance"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+    "sgp4>=2.22",
+    "torch>=2.0",
+    "pydantic>=2.0",
+    "pandas>=2.0",
+    "plotly>=5.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
