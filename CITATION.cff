@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: "space-ml-sim: Simulation Framework for AI Inference on Orbital Satellite Constellations"
+message: "If you use this software in your research, please cite it using the metadata from this file."
+type: software
+authors:
+  - name: "space-ml-sim contributors"
+repository-code: "https://github.com/yaitsmesj/space-ml-sim"
+url: "https://github.com/yaitsmesj/space-ml-sim"
+license: AGPL-3.0-or-later
+version: 0.2.0
+date-released: "2026-03-26"
+keywords:
+  - satellite
+  - space radiation
+  - fault injection
+  - neural network reliability
+  - triple modular redundancy
+  - orbital computing
+  - LEO
+abstract: >-
+  space-ml-sim is a simulation framework for studying the effects of
+  space radiation on AI inference running aboard orbital satellite
+  constellations. It provides parametric radiation environment models,
+  ML-aware fault injection into PyTorch models, fault tolerance
+  strategies (TMR, selective TMR, checkpoint rollback), and orbital
+  mechanics for LEO constellation simulation.

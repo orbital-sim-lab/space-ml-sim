@@ -1,0 +1,32 @@
+name: Commercial License Inquiry
+description: Inquire about commercial licensing for proprietary use
+labels: ["commercial-license"]
+body:
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: Briefly describe how you plan to use space-ml-sim.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: org_type
+    attributes:
+      label: Organization type
+      options:
+        - Startup
+        - Enterprise
+        - Government / Defense
+        - Academic (grant-funded)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: contact
+    attributes:
+      label: Contact
+      description: Preferred way to reach you (email, LinkedIn, etc.)
+    validations:
+      required: true
