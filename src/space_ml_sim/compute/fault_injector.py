@@ -67,20 +67,23 @@ class FaultInjector:
         if num_flips == 0:
             return []
 
+        # Ensure contiguous memory — view() fails on non-contiguous tensors
+        # (common with transposed weights in transformers)
+        if not tensor.is_contiguous():
+            tensor.data = tensor.contiguous()
         flat = tensor.view(-1)
         n = flat.numel()
         if n == 0:
             return []
 
-        # Random element indices and bit positions (0-31 for float32)
+        # Vectorized bit flipping — avoid Python loop for performance
         indices = torch.randint(0, n, (num_flips,))
         bit_positions = torch.randint(0, 32, (num_flips,))
+        masks = (1 << bit_positions).to(torch.int32)
 
-        # Reinterpret as int32, flip bits, reinterpret back
-        int_view = flat.clone().view(torch.int32)
-        for idx, bit in zip(indices, bit_positions):
-            int_view[idx] ^= 1 << bit.item()
-        flat.copy_(int_view.view(torch.float32))
+        int_view = flat.view(torch.int32)
+        for i in range(num_flips):
+            int_view[indices[i]] ^= masks[i]
 
         return bit_positions.tolist()
 

@@ -12,6 +12,11 @@ from space_ml_sim.environment.thermal import ThermalModel
 from space_ml_sim.environment.power import PowerModel
 from space_ml_sim.models.chip_profiles import ChipProfile
 
+# Module-level singletons for stateless models (avoids creating
+# millions of Pydantic objects in large constellation simulations)
+_DEFAULT_POWER_MODEL = PowerModel()
+_DEFAULT_THERMAL_MODEL = ThermalModel()
+
 
 class SatelliteState(str, Enum):
     """Operational state of a satellite."""
@@ -47,9 +52,8 @@ class Satellite(BaseModel):
         Returns:
             New Satellite with updated power_available_w.
         """
-        power_model = PowerModel()
         return self.model_copy(
-            update={"power_available_w": power_model.available_power(in_eclipse)}
+            update={"power_available_w": _DEFAULT_POWER_MODEL.available_power(in_eclipse)}
         )
 
     def with_thermal_update(self, compute_load_fraction: float, in_eclipse: bool) -> "Satellite":
@@ -62,9 +66,8 @@ class Satellite(BaseModel):
         Returns:
             New Satellite with updated temperature_c.
         """
-        thermal = ThermalModel()
         compute_power = self.chip_profile.tdp_watts * compute_load_fraction
-        temp = thermal.compute_temperature(compute_power, in_eclipse)
+        temp = _DEFAULT_THERMAL_MODEL.compute_temperature(compute_power, in_eclipse)
         return self.model_copy(update={"temperature_c": temp})
 
     def with_radiation_tick(self, rad_env: RadiationEnvironment, dt_seconds: float) -> "Satellite":

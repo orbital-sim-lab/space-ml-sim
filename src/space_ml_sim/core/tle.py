@@ -38,6 +38,9 @@ def _mean_anomaly_to_true_anomaly(mean_anomaly_rad: float, eccentricity: float) 
     Returns:
         True anomaly in radians, normalised to [0, 2*pi).
     """
+    if eccentricity >= 1.0:
+        raise ValueError(f"Eccentricity must be < 1.0 for bound orbits, got {eccentricity}")
+
     # Normalise M to [0, 2*pi)
     m = mean_anomaly_rad % _TWOPI
 

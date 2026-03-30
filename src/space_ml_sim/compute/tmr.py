@@ -9,6 +9,7 @@ Strategies:
 from __future__ import annotations
 
 import copy
+import warnings
 from typing import Any
 
 import numpy as np
@@ -117,19 +118,25 @@ class TMRWrapper:
         outputs = self.model(x.to(self.device))
         predictions = outputs.argmax(dim=1)
 
-        # Simple anomaly detection: check for NaN/Inf in outputs
         has_anomaly = bool(torch.isnan(outputs).any() or torch.isinf(outputs).any())
+        rolled_back = False
+        recovery_failed = False
 
         if has_anomaly and self.checkpoint is not None:
             self.model.load_state_dict(copy.deepcopy(self.checkpoint))
             outputs = self.model(x.to(self.device))
-            predictions = outputs.argmax(dim=1)
+            rolled_back = True
+            # Verify recovery actually worked
+            recovery_failed = bool(torch.isnan(outputs).any() or torch.isinf(outputs).any())
+            if not recovery_failed:
+                predictions = outputs.argmax(dim=1)
 
         return {
             "predictions": predictions,
             "disagreements": 0,
             "anomaly_detected": has_anomaly,
-            "rolled_back": has_anomaly,
+            "rolled_back": rolled_back,
+            "recovery_failed": recovery_failed,
             "strategy": "checkpoint_rollback",
         }
 
@@ -152,12 +159,21 @@ class TMRWrapper:
         if not hasattr(self, "replicas"):
             raise RuntimeError("inject_faults_to_replicas requires TMR strategy")
 
-        if self.strategy == "selective_tmr" and self.protected_layers:
-            for replica in self.replicas:
-                self._inject_to_protected_only(replica, injector, faults_per_replica)
-        else:
-            for replica in self.replicas:
-                injector.inject_weight_faults(replica, num_faults=faults_per_replica)
+        if self.strategy == "selective_tmr":
+            if not self.protected_layers:
+                warnings.warn(
+                    "selective_tmr: no protected_layers configured, "
+                    "falling back to full-model injection. "
+                    "Call configure_protection() first.",
+                    stacklevel=2,
+                )
+            else:
+                for replica in self.replicas:
+                    self._inject_to_protected_only(replica, injector, faults_per_replica)
+                return
+
+        for replica in self.replicas:
+            injector.inject_weight_faults(replica, num_faults=faults_per_replica)
 
     def _inject_to_protected_only(
         self,

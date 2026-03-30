@@ -103,7 +103,13 @@ class RadiationEnvironment(BaseModel):
         Returns:
             Number of single-event upsets sampled.
         """
-        rate = self.base_seu_rate * num_bits * dt_seconds
+        # SEU rate = flux * cross_section_per_bit * num_bits * time
+        # base_seu_rate encodes the environmental particle flux (upsets/bit/sec
+        # at a reference cross-section of 1e-14 cm^2). Scale by the chip's
+        # actual cross-section normalized to this reference.
+        reference_cross_section = 1e-14  # cm^2, matches gcr_base calibration
+        cross_section_factor = chip_cross_section_cm2 / reference_cross_section
+        rate = self.base_seu_rate * cross_section_factor * num_bits * dt_seconds
         return int(np.random.poisson(rate))
 
     def tid_dose(self, dt_seconds: float) -> float:

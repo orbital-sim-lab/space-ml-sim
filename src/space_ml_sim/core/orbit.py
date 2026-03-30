@@ -88,8 +88,12 @@ def _keplerian_to_cartesian(
     return (x, y, z), (vx, vy, vz)
 
 
-def _j2_drift_rates(a: float, inc_rad: float, n: float) -> tuple[float, float]:
-    """Compute secular J2 drift rates for RAAN and argument of perigee.
+def _j2_raan_drift(a: float, inc_rad: float, n: float) -> float:
+    """Compute secular J2 drift rate for RAAN.
+
+    For circular orbits, only RAAN drift is physically meaningful.
+    Argument of perigee is undefined for circular orbits, so we
+    do not include it (it would corrupt the trajectory).
 
     Args:
         a: Semi-major axis in km.
@@ -97,12 +101,9 @@ def _j2_drift_rates(a: float, inc_rad: float, n: float) -> tuple[float, float]:
         n: Mean motion in rad/s.
 
     Returns:
-        (d_raan_dt, d_omega_dt) both in rad/s.
+        d_raan_dt in rad/s.
     """
-    factor = -1.5 * n * J2 * (R_EARTH_KM / a) ** 2
-    d_raan_dt = factor * math.cos(inc_rad)
-    d_omega_dt = -factor * (2.0 - 2.5 * math.sin(inc_rad) ** 2)
-    return d_raan_dt, d_omega_dt
+    return -1.5 * n * J2 * (R_EARTH_KM / a) ** 2 * math.cos(inc_rad)
 
 
 def position_at(
@@ -130,12 +131,11 @@ def position_at(
     nu0_rad = math.radians(orbit_config.true_anomaly_deg)
     n = orbit_config.mean_motion_rad_per_sec
 
+    nu_rad = nu0_rad + n * time_seconds
+
     if use_j2:
-        d_raan_dt, d_omega_dt = _j2_drift_rates(a, inc_rad, n)
+        d_raan_dt = _j2_raan_drift(a, inc_rad, n)
         raan_rad = raan_rad + d_raan_dt * time_seconds
-        nu_rad = nu0_rad + n * time_seconds + d_omega_dt * time_seconds
-    else:
-        nu_rad = nu0_rad + n * time_seconds
 
     pos, _ = _keplerian_to_cartesian(a, inc_rad, raan_rad, nu_rad)
     return pos
@@ -166,10 +166,7 @@ def propagate(
     nu0_rad = math.radians(orbit_config.true_anomaly_deg)
     n = orbit_config.mean_motion_rad_per_sec
 
-    if use_j2:
-        d_raan_dt, d_omega_dt = _j2_drift_rates(a, inc_rad, n)
-    else:
-        d_raan_dt, d_omega_dt = 0.0, 0.0
+    d_raan_dt = _j2_raan_drift(a, inc_rad, n) if use_j2 else 0.0
 
     duration_seconds = duration_minutes * 60.0
     num_steps = int(duration_seconds / step_seconds) + 1
@@ -179,7 +176,7 @@ def propagate(
         t = start_time + i * step_seconds
         elapsed = t - start_time
         raan_rad = raan_rad_epoch + d_raan_dt * elapsed
-        nu_rad = nu0_rad + n * elapsed + d_omega_dt * elapsed
+        nu_rad = nu0_rad + n * elapsed
         pos, vel = _keplerian_to_cartesian(a, inc_rad, raan_rad, nu_rad)
         states.append(OrbitalState(time_seconds=t, position_km=pos, velocity_km_s=vel))
 
@@ -289,7 +286,10 @@ def is_in_eclipse(
     """
     pos = np.array(position_km)
     sun_dir = np.array(sun_direction)
-    sun_dir = sun_dir / np.linalg.norm(sun_dir)
+    norm = np.linalg.norm(sun_dir)
+    if norm == 0:
+        return False  # No sun direction → assume sunlit
+    sun_dir = sun_dir / norm
 
     # Project satellite position onto sun direction
     projection = float(np.dot(pos, sun_dir))

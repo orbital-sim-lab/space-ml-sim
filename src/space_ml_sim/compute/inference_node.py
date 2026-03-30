@@ -56,9 +56,13 @@ class InferenceNode:
             InferenceResult with predictions and metadata.
         """
         self.status = NodeStatus.RUNNING
-        with torch.no_grad():
-            outputs = self.model(inputs.to(self.device))
-            predictions = outputs.argmax(dim=1).tolist()
+        try:
+            with torch.no_grad():
+                outputs = self.model(inputs.to(self.device))
+                predictions = outputs.argmax(dim=1).tolist()
+        except Exception:
+            self.status = NodeStatus.FAULTED
+            raise
 
         self.inference_count += 1
         self.status = NodeStatus.IDLE
