@@ -22,6 +22,9 @@ class ChipProfile(BaseModel):
     memory_bits: int = Field(gt=0, description="Total bits in on-chip memory")
     notes: str = Field(default="", description="Additional notes about the chip")
 
+    def __repr__(self) -> str:
+        return f"ChipProfile({self.name!r}, {self.compute_tops} TOPS, TID={self.tid_tolerance_krad} krad)"
+
 
 # --- Pre-defined profiles ---
 
@@ -73,4 +76,48 @@ NOEL_V_FT = ChipProfile(
     notes="Open-source RISC-V — first fault-tolerant RISC-V in orbit (TRISAT-R)",
 )
 
-ALL_CHIPS: list[ChipProfile] = [TERAFAB_D3, GOOGLE_TRILLIUM_V6E, RAD5500, NOEL_V_FT]
+JETSON_AGX_ORIN = ChipProfile(
+    name="NVIDIA Jetson AGX Orin",
+    node_nm=8,
+    tdp_watts=60,
+    max_temp_c=85,
+    seu_cross_section_cm2=3e-13,
+    tid_tolerance_krad=10,
+    compute_tops=275,
+    memory_bits=64 * 8 * 1024**3,  # 64 GB
+    notes="COTS — flying on Planet Labs sats, requires radiation shielding",
+)
+
+ZYNQ_ULTRASCALE = ChipProfile(
+    name="AMD Zynq UltraScale+ (Xiphos Q8S)",
+    node_nm=16,
+    tdp_watts=10,
+    max_temp_c=100,
+    seu_cross_section_cm2=5e-14,
+    tid_tolerance_krad=30,
+    compute_tops=0.5,
+    memory_bits=4 * 8 * 1024**3,  # 4 GB
+    notes="Rad-tolerant FPGA SoC — widely used OBC platform",
+)
+
+VERSAL_AI_CORE = ChipProfile(
+    name="AMD Versal AI Core XQRVC1902",
+    node_nm=7,
+    tdp_watts=75,
+    max_temp_c=100,
+    seu_cross_section_cm2=2e-14,
+    tid_tolerance_krad=100,
+    compute_tops=130,
+    memory_bits=16 * 8 * 1024**3,  # 16 GB
+    notes="Space-grade — qualified for 15-year missions, sampling 2026",
+)
+
+ALL_CHIPS: list[ChipProfile] = [
+    TERAFAB_D3,
+    GOOGLE_TRILLIUM_V6E,
+    RAD5500,
+    NOEL_V_FT,
+    JETSON_AGX_ORIN,
+    ZYNQ_ULTRASCALE,
+    VERSAL_AI_CORE,
+]

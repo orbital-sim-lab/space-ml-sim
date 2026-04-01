@@ -6,6 +6,9 @@ from space_ml_sim.models.chip_profiles import (
     GOOGLE_TRILLIUM_V6E,
     RAD5500,
     NOEL_V_FT,
+    JETSON_AGX_ORIN,
+    ZYNQ_ULTRASCALE,
+    VERSAL_AI_CORE,
     ALL_CHIPS,
 )
 from space_ml_sim.models.rad_profiles import RadPreset
@@ -16,6 +19,9 @@ __all__ = [
     "GOOGLE_TRILLIUM_V6E",
     "RAD5500",
     "NOEL_V_FT",
+    "JETSON_AGX_ORIN",
+    "ZYNQ_ULTRASCALE",
+    "VERSAL_AI_CORE",
     "ALL_CHIPS",
     "RadPreset",
 ]

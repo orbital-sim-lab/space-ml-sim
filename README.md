@@ -133,12 +133,15 @@ space_ml_sim/
 
 ## Chip Profiles
 
-| Chip | Node | TDP | INT8 TOPS | TID Tolerance | SEU Cross-Section | Notes |
-|------|------|-----|-----------|---------------|-------------------|-------|
-| TERAFAB D3 | 2 nm | 300 W | 200 | 100 krad | 1e-14 cm^2/bit | SpaceX rad-hardened |
-| Trillium TPU v6e | 4 nm | 200 W | 450 | 15 krad | 5e-13 cm^2/bit | COTS with shielding |
-| BAE RAD5500 | 45 nm | 15 W | 0.001 | 1000 krad | 1e-15 cm^2/bit | Space-grade baseline |
-| NOEL-V FT | 28 nm | 5 W | 0.01 | 50 krad | 1e-14 cm^2/bit | Open RISC-V in orbit |
+| Chip | Node | TDP | INT8 TOPS | TID Tolerance | Notes |
+|------|------|-----|-----------|---------------|-------|
+| TERAFAB D3 | 2 nm | 300 W | 200 | 100 krad | SpaceX rad-hardened |
+| Trillium TPU v6e | 4 nm | 200 W | 450 | 15 krad | COTS with shielding |
+| Jetson AGX Orin | 8 nm | 60 W | 275 | 10 krad | Flying on Planet Labs |
+| Versal AI Core | 7 nm | 75 W | 130 | 100 krad | Space-grade, 15-year missions |
+| Zynq UltraScale+ | 16 nm | 10 W | 0.5 | 30 krad | Xiphos Q8S OBC |
+| BAE RAD5500 | 45 nm | 15 W | 0.001 | 1000 krad | Space-grade baseline |
+| NOEL-V FT | 28 nm | 5 W | 0.01 | 50 krad | Open RISC-V in orbit |
 
 ---
 
