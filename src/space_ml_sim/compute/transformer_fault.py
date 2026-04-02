@@ -79,9 +79,14 @@ _FFN_KEYWORDS: Final[tuple[str, ...]] = (
     "mlp",
     "feed_forward",
     "feedforward",
-    "fc",
-    # Match nn.Linear inside sequential blocks: "0.weight", "2.weight", etc.
-    # We rely on the *module path* containing "ffn" / "mlp" for these.
+    "fc1",
+    "fc2",
+    "fc_in",
+    "fc_out",
+    "dense",
+    "intermediate",
+    # Note: bare "fc" was removed — it matched too broadly (e.g., "interface").
+    # Use specific fc1/fc2/fc_in/fc_out patterns instead.
 )
 
 # Subset of attention keywords that specifically identify Q/K/V (not output proj)

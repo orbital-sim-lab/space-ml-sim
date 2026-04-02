@@ -9,7 +9,6 @@ from __future__ import annotations
 import math
 from typing import NamedTuple
 
-import numpy as np
 from pydantic import BaseModel, Field
 
 # Earth constants
@@ -295,22 +294,22 @@ def is_in_eclipse(
     Returns:
         True if the satellite is in Earth's cylindrical shadow.
     """
-    pos = np.array(position_km)
-    sun_dir = np.array(sun_direction)
-    norm = np.linalg.norm(sun_dir)
+    # Pure-math implementation (no numpy allocation per call)
+    sx, sy, sz = sun_direction
+    norm = math.sqrt(sx * sx + sy * sy + sz * sz)
     if norm == 0:
         return False  # No sun direction → assume sunlit
-    sun_dir = sun_dir / norm
+    sx, sy, sz = sx / norm, sy / norm, sz / norm
 
-    # Project satellite position onto sun direction
-    projection = float(np.dot(pos, sun_dir))
+    px, py, pz = position_km
+    projection = px * sx + py * sy + pz * sz
 
-    # If satellite is on the sunlit side, not in eclipse
+    # Satellite on sunlit side → not in eclipse
     if projection > 0:
         return False
 
     # Perpendicular distance from shadow axis
-    perp = pos - projection * sun_dir
-    perp_dist = float(np.linalg.norm(perp))
-
-    return perp_dist < R_EARTH_KM
+    rx = px - projection * sx
+    ry = py - projection * sy
+    rz = pz - projection * sz
+    return (rx * rx + ry * ry + rz * rz) < R_EARTH_KM * R_EARTH_KM

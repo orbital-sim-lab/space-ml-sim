@@ -48,10 +48,12 @@ class FaultInjector:
         self,
         rad_env: RadiationEnvironment,
         chip_profile: ChipProfile,
+        seed: int | None = None,
     ) -> None:
         self.rad_env = rad_env
         self.chip = chip_profile
         self._hooks: list[torch.utils.hooks.RemovableHook] = []
+        self._rng = np.random.default_rng(seed)
 
     @staticmethod
     def flip_random_bits(tensor: torch.Tensor, num_flips: int) -> list[int]:
@@ -109,7 +111,7 @@ class FaultInjector:
         if num_faults is None:
             total_weight_bits = sum(p.numel() * 32 for p in model.parameters())
             expected = self.rad_env.base_seu_rate * total_weight_bits * inference_time_seconds
-            num_faults = int(np.random.poisson(expected))
+            num_faults = int(self._rng.poisson(expected))
 
         if num_faults == 0:
             return FaultReport()
@@ -160,11 +162,12 @@ class FaultInjector:
             fault_probability: Probability of a bit flip per tensor element per forward pass.
         """
         self.remove_hooks()
+        rng = self._rng
 
         def make_hook(layer_name: str):
             def hook(module, input, output):
                 if isinstance(output, torch.Tensor) and output.numel() > 0:
-                    num_faults = int(np.random.binomial(output.numel(), fault_probability))
+                    num_faults = int(rng.binomial(output.numel(), fault_probability))
                     if num_faults > 0:
                         FaultInjector.flip_random_bits(output, num_faults)
                 return output
@@ -209,9 +212,14 @@ class FaultInjector:
 
         results: list[dict] = []
 
+        # Pre-allocate one working model and a clean state dict
+        # to avoid deepcopy per trial (saves ~50% memory)
+        test_model = copy.deepcopy(model)
+        clean_state = copy.deepcopy(model.state_dict())
+
         for fc in fault_counts:
             for trial in range(num_trials):
-                test_model = copy.deepcopy(model)
+                test_model.load_state_dict(copy.deepcopy(clean_state))
                 test_model.eval()
 
                 report = self.inject_weight_faults(test_model, num_faults=fc)

@@ -63,7 +63,9 @@ class CheckpointManager:
             raise IndexError("No checkpoints available")
 
         entry = self._checkpoints[index]
-        model.load_state_dict(copy.deepcopy(entry["state_dict"]))
+        # No deepcopy needed — load_state_dict copies tensor data into
+        # the model's existing buffers without mutating the source dict.
+        model.load_state_dict(entry["state_dict"])
         return entry["metadata"]
 
     @property

@@ -91,7 +91,11 @@ class RadiationEnvironment(BaseModel):
         return (base_krad_per_year / 365.25) * shield_atten
 
     def sample_seu_events(
-        self, chip_cross_section_cm2: float, num_bits: int, dt_seconds: float
+        self,
+        chip_cross_section_cm2: float,
+        num_bits: int,
+        dt_seconds: float,
+        rng: np.random.Generator | None = None,
     ) -> int:
         """Sample number of SEU events in a time interval from Poisson distribution.
 
@@ -99,6 +103,7 @@ class RadiationEnvironment(BaseModel):
             chip_cross_section_cm2: SEU cross-section per bit in cm^2.
             num_bits: Total number of bits exposed.
             dt_seconds: Time interval in seconds.
+            rng: Optional numpy Generator for reproducible results.
 
         Returns:
             Number of single-event upsets sampled.
@@ -110,7 +115,8 @@ class RadiationEnvironment(BaseModel):
         reference_cross_section = 1e-14  # cm^2, matches gcr_base calibration
         cross_section_factor = chip_cross_section_cm2 / reference_cross_section
         rate = self.base_seu_rate * cross_section_factor * num_bits * dt_seconds
-        return int(np.random.poisson(rate))
+        gen = rng or np.random.default_rng()
+        return int(gen.poisson(rate))
 
     def tid_dose(self, dt_seconds: float) -> float:
         """TID accumulated over dt_seconds in krad(Si)."""
