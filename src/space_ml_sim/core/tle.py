@@ -133,7 +133,7 @@ def parse_tle(line1: str, line2: str) -> OrbitConfig:
     # sgp4's Satrec stores Kozai mean motion in rad/min as `no_kozai`.
     # Older builds may expose it as `no` (also rad/min).
     # Convert to rad/s by dividing by 60.
-    n_rad_per_min: float = getattr(sat, "no_kozai", None) or getattr(sat, "no", 0.0)
+    n_rad_per_min: float = sat.no_kozai if hasattr(sat, "no_kozai") else getattr(sat, "no", 0.0)
     if n_rad_per_min == 0.0:
         raise ValueError("Could not retrieve mean motion from Satrec (no_kozai / no both zero).")
 

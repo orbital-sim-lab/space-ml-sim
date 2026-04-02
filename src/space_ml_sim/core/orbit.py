@@ -159,7 +159,18 @@ def propagate(
 
     Returns:
         List of OrbitalState tuples (time, position_km, velocity_km_s).
+
+    Raises:
+        ValueError: If step_seconds <= 0 or would produce > 1M steps.
     """
+    if step_seconds <= 0:
+        raise ValueError(f"step_seconds must be positive, got {step_seconds}")
+    num_steps_est = int((duration_minutes * 60.0) / step_seconds) + 1
+    if num_steps_est > 1_000_000:
+        raise ValueError(
+            f"Requested {num_steps_est} steps exceeds 1M limit. "
+            "Reduce duration_minutes or increase step_seconds."
+        )
     a = orbit_config.semi_major_axis_km
     inc_rad = math.radians(orbit_config.inclination_deg)
     raan_rad_epoch = math.radians(orbit_config.raan_deg)

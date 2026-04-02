@@ -174,12 +174,10 @@ class TestIterate:
         assert clocks == []
 
     def test_iterate_duration_less_than_dt_yields_nothing(self):
-        """Duration smaller than one step should yield nothing (clock starts at current_time < end_time only if current_time < end_time, but end_time = current_time + 0.5 < current_time + 1.0 = next tick)."""
+        """Duration smaller than one step should yield nothing — zero complete steps fit."""
         clock = SimClock(current_time=0.0, dt_seconds=2.0)
         clocks = list(clock.iterate(duration_seconds=1.0))
-        # current_time (0.0) < end_time (1.0) -> yields once at t=0.0, then ticks to 2.0 which >= 1.0 -> stop
-        assert len(clocks) == 1
-        assert clocks[0].current_time == pytest.approx(0.0)
+        assert len(clocks) == 0
 
     def test_iterate_does_not_mutate_original_clock(self):
         clock = SimClock(current_time=0.0, dt_seconds=1.0, elapsed_steps=0)

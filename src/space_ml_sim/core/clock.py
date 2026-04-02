@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 from pydantic import BaseModel, Field
 
 
@@ -30,14 +32,19 @@ class SimClock(BaseModel):
             return 0
         return int(remaining / self.dt_seconds)
 
-    def iterate(self, duration_seconds: float):
+    def iterate(self, duration_seconds: float) -> Iterator["SimClock"]:
         """Yield successive clock states for the given duration.
+
+        Uses integer step counting to avoid floating-point drift
+        in the loop termination condition.
 
         Yields:
             SimClock at each time step (new object each iteration).
         """
-        clock = self
-        end_time = self.current_time + duration_seconds
-        while clock.current_time < end_time:
-            yield clock
-            clock = clock.tick()
+        num_steps = int(duration_seconds / self.dt_seconds)
+        for i in range(num_steps):
+            yield SimClock(
+                current_time=self.current_time + i * self.dt_seconds,
+                dt_seconds=self.dt_seconds,
+                elapsed_steps=self.elapsed_steps + i,
+            )

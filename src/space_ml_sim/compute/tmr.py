@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import copy
 import warnings
+from collections.abc import Callable
 from typing import Any
 
 import numpy as np
@@ -28,7 +29,7 @@ class TMRWrapper:
 
     def __init__(
         self,
-        model_factory: callable,
+        model_factory: Callable[[], torch.nn.Module],
         strategy: str = "full_tmr",
         device: str = "cpu",
     ) -> None:
@@ -209,7 +210,7 @@ class TMRWrapper:
 
     @staticmethod
     def sensitivity_analysis(
-        model_factory: callable,
+        model_factory: Callable[[], torch.nn.Module],
         dataloader: torch.utils.data.DataLoader,
         injector: FaultInjector,
         faults_per_layer: int = 100,

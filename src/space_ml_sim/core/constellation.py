@@ -151,13 +151,22 @@ class Constellation:
 
         self.satellites = updated
 
-        # Compute metrics
-        active = sum(1 for s in self.satellites if s.state == SatelliteState.NOMINAL)
-        degraded = sum(1 for s in self.satellites if s.state == SatelliteState.DEGRADED)
-        failed = sum(1 for s in self.satellites if s.state == SatelliteState.FAILED)
-        temps = [s.temperature_c for s in self.satellites if s.is_operational]
-        avg_temp = sum(temps) / len(temps) if temps else 0.0
-        total_seus = sum(s.total_seu_events for s in self.satellites)
+        # Compute metrics in a single pass
+        active = degraded = failed = total_seus = 0
+        temp_sum = 0.0
+        temp_count = 0
+        for s in self.satellites:
+            if s.state == SatelliteState.NOMINAL:
+                active += 1
+            elif s.state == SatelliteState.DEGRADED:
+                degraded += 1
+            else:
+                failed += 1
+            if s.is_operational:
+                temp_sum += s.temperature_c
+                temp_count += 1
+            total_seus += s.total_seu_events
+        avg_temp = temp_sum / temp_count if temp_count > 0 else 0.0
 
         return {
             "sim_time": self._sim_time,
