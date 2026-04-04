@@ -2,7 +2,7 @@
 
 **Simulate AI inference on orbital satellite constellations under realistic space radiation.**
 
-SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Google is testing Trillium TPUs aboard Suncatcher for on-orbit inference. But what happens to a ResNet or a transformer when a galactic cosmic ray flips a bit in a weight tensor 550 km above Earth?
+SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Cloud-grade TPUs are being tested for on-orbit inference. But what happens to a ResNet or a transformer when a galactic cosmic ray flips a bit in a weight tensor 550 km above Earth?
 
 `space-ml-sim` answers that question.
 
@@ -26,7 +26,7 @@ SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Goo
 
 **ONNX import** -- Load `.onnx` models for fault injection without writing PyTorch code (`pip install space-ml-sim[onnx]`)
 
-**Hardware profiles** -- TERAFAB D3, Google Trillium TPU v6e, BAE RAD5500, NOEL-V RISC-V
+**Hardware profiles** -- TERAFAB D3, Trillium TPU v6e, BAE RAD5500, NOEL-V RISC-V
 
 ---
 
@@ -54,10 +54,10 @@ pip install -e ".[dev]"
 import torch, torchvision, copy
 from space_ml_sim.compute.fault_injector import FaultInjector
 from space_ml_sim.environment.radiation import RadiationEnvironment
-from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
 model = torchvision.models.resnet18(weights="DEFAULT").eval()
-injector = FaultInjector(RadiationEnvironment.leo_500km(), GOOGLE_TRILLIUM_V6E)
+injector = FaultInjector(RadiationEnvironment.leo_500km(), TRILLIUM_V6E)
 
 for n_faults in [0, 10, 50, 100, 500]:
     test = copy.deepcopy(model)

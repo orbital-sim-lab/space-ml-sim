@@ -148,10 +148,10 @@ class TestSeuCount:
     def test_expected_seu_count_positive_trillium(self):
         """SEU count must be positive for Trillium TPU at 550km."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
         budget = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=STARLINK_ALT,
             inclination_deg=STARLINK_INC,
             mission_years=3.0,
@@ -367,10 +367,10 @@ class TestTidOk:
     def test_trillium_fails_5_years_at_2000km(self):
         """Trillium TPU (15 krad) must have tid_ok=False for 5 years at 2000km."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
         budget = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=2000.0,
             inclination_deg=53.0,
             mission_years=5.0,
@@ -397,10 +397,10 @@ class TestTidOk:
     def test_tid_ok_false_when_margin_exceeds_one(self):
         """tid_ok must be False whenever tid_margin_fraction > 1.0."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
         budget = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=2000.0,
             inclination_deg=53.0,
             mission_years=5.0,
@@ -466,16 +466,16 @@ class TestAltitudeEffects:
     def test_recommended_shielding_increases_for_higher_orbit(self):
         """Recommended shielding at 2000km must be >= shielding at 550km for same chip."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
         low = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=550.0,
             inclination_deg=53.0,
             mission_years=5.0,
         )
         high = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=2000.0,
             inclination_deg=53.0,
             mission_years=5.0,
@@ -583,7 +583,7 @@ class TestYearsToTidLimit:
     def test_years_to_tid_limit_shorter_for_sensitive_chip(self):
         """A chip with lower TID tolerance reaches limit sooner (same orbit)."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import RAD5500, GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E
 
         tough = compute_mission_budget(
             chip=RAD5500,
@@ -592,7 +592,7 @@ class TestYearsToTidLimit:
             mission_years=3.0,
         )
         sensitive = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=STARLINK_ALT,
             inclination_deg=STARLINK_INC,
             mission_years=3.0,
@@ -606,16 +606,16 @@ class TestYearsToTidLimit:
     def test_years_to_tid_limit_shorter_at_higher_altitude(self):
         """TID limit is reached sooner at higher altitude (same chip)."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
         low = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=550.0,
             inclination_deg=53.0,
             mission_years=3.0,
         )
         high = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=2000.0,
             inclination_deg=53.0,
             mission_years=3.0,
@@ -678,7 +678,7 @@ class TestCrossChipComparison:
     def test_rad5500_fewer_seus_per_day_than_trillium(self):
         """RAD5500 (smaller cross-section) must have fewer SEUs/day than Trillium."""
         from space_ml_sim.metrics.mission_budget import compute_mission_budget
-        from space_ml_sim.models.chip_profiles import RAD5500, GOOGLE_TRILLIUM_V6E
+        from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E
 
         rad = compute_mission_budget(
             chip=RAD5500,
@@ -687,7 +687,7 @@ class TestCrossChipComparison:
             mission_years=3.0,
         )
         tpu = compute_mission_budget(
-            chip=GOOGLE_TRILLIUM_V6E,
+            chip=TRILLIUM_V6E,
             altitude_km=STARLINK_ALT,
             inclination_deg=STARLINK_INC,
             mission_years=3.0,

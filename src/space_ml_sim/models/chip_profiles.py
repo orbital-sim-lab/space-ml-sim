@@ -40,8 +40,8 @@ TERAFAB_D3 = ChipProfile(
     notes="SpaceX D3 — radiation-hardened for orbital AI Sat Mini",
 )
 
-GOOGLE_TRILLIUM_V6E = ChipProfile(
-    name="Google Trillium TPU v6e",
+TRILLIUM_V6E = ChipProfile(
+    name="Trillium TPU v6e",
     node_nm=4,
     tdp_watts=200,
     max_temp_c=85,
@@ -114,7 +114,7 @@ VERSAL_AI_CORE = ChipProfile(
 
 ALL_CHIPS: list[ChipProfile] = [
     TERAFAB_D3,
-    GOOGLE_TRILLIUM_V6E,
+    TRILLIUM_V6E,
     RAD5500,
     NOEL_V_FT,
     JETSON_AGX_ORIN,

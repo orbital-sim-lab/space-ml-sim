@@ -16,7 +16,7 @@ from rich.table import Table
 from space_ml_sim.compute.fault_injector import FaultInjector
 from space_ml_sim.compute.tmr import TMRWrapper
 from space_ml_sim.environment.radiation import RadiationEnvironment
-from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
 console = Console()
 
@@ -68,12 +68,12 @@ def model_factory():
 
 def main() -> None:
     console.print("[bold cyan]TMR Comparison Demo[/]")
-    console.print(f"Chip: {GOOGLE_TRILLIUM_V6E.name}")
+    console.print(f"Chip: {TRILLIUM_V6E.name}")
     console.print(f"Faults per replica: {FAULTS_PER_REPLICA}\n")
 
     loader = get_loader()
     rad_env = RadiationEnvironment.leo_500km()
-    injector = FaultInjector(rad_env=rad_env, chip_profile=GOOGLE_TRILLIUM_V6E)
+    injector = FaultInjector(rad_env=rad_env, chip_profile=TRILLIUM_V6E)
 
     # 1. Baseline (no faults)
     console.print("[dim]Evaluating baseline...[/]")

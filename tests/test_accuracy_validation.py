@@ -31,7 +31,7 @@ from space_ml_sim.environment.radiation import RadiationEnvironment
 from space_ml_sim.compute.fault_injector import FaultInjector
 from space_ml_sim.models.chip_profiles import (
     TERAFAB_D3,
-    GOOGLE_TRILLIUM_V6E,
+    TRILLIUM_V6E,
     RAD5500,
     JETSON_AGX_ORIN,
 )
@@ -316,7 +316,7 @@ class TestChipCrossSectionAffectsRate:
         rad5500_seus = env.sample_seu_events(RAD5500.seu_cross_section_cm2, num_bits, dt, rng=rng)
         rng2 = np.random.default_rng(42)
         trillium_seus = env.sample_seu_events(
-            GOOGLE_TRILLIUM_V6E.seu_cross_section_cm2, num_bits, dt, rng=rng2
+            TRILLIUM_V6E.seu_cross_section_cm2, num_bits, dt, rng=rng2
         )
 
         # Trillium cross-section is 500x larger → expect ~500x more SEUs
@@ -472,8 +472,8 @@ class TestChipProfileDataAccuracy:
         assert TERAFAB_D3.node_nm == 2
 
     def test_trillium_is_4nm(self):
-        """Trillium TPU v6e: 4nm node. Source: Google Cloud TPU docs."""
-        assert GOOGLE_TRILLIUM_V6E.node_nm == 4
+        """Trillium TPU v6e: 4nm node. Source: public TPU specification docs."""
+        assert TRILLIUM_V6E.node_nm == 4
 
     def test_rad5500_is_45nm(self):
         """BAE RAD5500: 45nm node. Source: BAE Systems datasheet."""
@@ -514,4 +514,4 @@ class TestChipProfileDataAccuracy:
         # COTS comparison: Trillium (4nm) more susceptible than Zynq (16nm)
         from space_ml_sim.models.chip_profiles import ZYNQ_ULTRASCALE
 
-        assert GOOGLE_TRILLIUM_V6E.seu_cross_section_cm2 > ZYNQ_ULTRASCALE.seu_cross_section_cm2
+        assert TRILLIUM_V6E.seu_cross_section_cm2 > ZYNQ_ULTRASCALE.seu_cross_section_cm2

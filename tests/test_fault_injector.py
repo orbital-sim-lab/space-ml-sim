@@ -6,7 +6,7 @@ import torch.nn as nn
 
 from space_ml_sim.compute.fault_injector import FaultInjector, FaultReport
 from space_ml_sim.environment.radiation import RadiationEnvironment
-from space_ml_sim.models.chip_profiles import GOOGLE_TRILLIUM_V6E
+from space_ml_sim.models.chip_profiles import TRILLIUM_V6E
 
 
 def _simple_model() -> nn.Module:
@@ -32,7 +32,7 @@ def _random_dataloader(num_batches: int = 2, batch_size: int = 8):
 def injector():
     return FaultInjector(
         rad_env=RadiationEnvironment.leo_500km(),
-        chip_profile=GOOGLE_TRILLIUM_V6E,
+        chip_profile=TRILLIUM_V6E,
     )
 
 
