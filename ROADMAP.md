@@ -18,7 +18,7 @@
 - [x] 3 additional chip profiles (Jetson Orin, Zynq, Versal AI Core)
 - [x] GitHub Actions CI (6 jobs: tests, coverage, lint, security, license, benchmarks)
 
-### v0.3 (Current)
+### v0.3
 - [x] Radiation timeline with SAA crossing detection from TLE
 - [x] Quantization-aware fault comparison (FP32/FP16/INT8)
 - [x] Per-layer sensitivity heatmap visualization
@@ -29,15 +29,15 @@
 
 ## In Progress
 
-### v0.4 (Accuracy & Integration) — Target: May 2026
+### v0.4 (Accuracy & Integration) — Current
 Focus: Make the simulation results trustworthy enough for flight qualification support.
 
-- [ ] Validate SEU rates against SPENVIS AP-9/AE-9 reference data
-- [ ] Validate TID rates against ESA SPENVIS outputs for standard orbits
-- [ ] Add ground track visualization with radiation overlay on world map
-- [ ] Integrate with poliastro for orbit objects import
-- [ ] Add mission lifetime reliability estimation (Monte Carlo)
-- [ ] Add per-orbit SEU/TID budget calculator
+- [x] Validate SEU rates against SPENVIS AP-9/AE-9 reference data
+- [x] Validate TID rates against ESA SPENVIS outputs for standard orbits
+- [x] Add ground track visualization with radiation overlay on world map
+- [x] Integrate with poliastro for orbit objects import
+- [x] Add mission lifetime reliability estimation (Monte Carlo)
+- [x] Add per-orbit SEU/TID budget calculator
 - [ ] Create Jupyter notebook tutorial series (3 exercises for university courses)
 
 ### v0.5 (Distributed & Communication) — Target: Jul 2026
@@ -63,7 +63,7 @@ must include analytical validation tests where possible. The following accuracy
 improvements are tracked independently of feature releases:
 
 - [ ] Cross-validate orbit propagation against SGP4 for standard TLEs
-- [ ] Cross-validate radiation rates against published SPENVIS reference orbits
+- [x] Cross-validate radiation rates against published SPENVIS reference orbits
 - [ ] Add uncertainty quantification to radiation model outputs
 - [ ] Validate fault injection statistics against analytical Poisson expectations
 - [ ] Benchmark TMR correction rate against theoretical 2-of-3 voting probability

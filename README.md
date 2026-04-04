@@ -26,7 +26,15 @@ SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Clo
 
 **ONNX import** -- Load `.onnx` models for fault injection without writing PyTorch code (`pip install space-ml-sim[onnx]`)
 
-**Hardware profiles** -- TERAFAB D3, Trillium TPU v6e, BAE RAD5500, NOEL-V RISC-V
+**Mission budget** -- Deterministic SEU/TID projections over mission lifetime with shielding recommendations
+
+**Monte Carlo reliability** -- Statistical mission survival estimation with confidence intervals (`pip install space-ml-sim`)
+
+**Ground track visualization** -- World map with satellite ground track, radiation color overlay, and SAA boundary
+
+**poliastro import** -- Convert poliastro Orbit objects to space-ml-sim (`pip install space-ml-sim[poliastro]`)
+
+**Hardware profiles** -- TERAFAB D3, Trillium TPU v6e, BAE RAD5500, NOEL-V RISC-V, Jetson Orin, Zynq, Versal AI Core
 
 ---
 
@@ -181,9 +189,10 @@ bandit -r src/ -c pyproject.toml -ll
 
 - [x] **v0.1** -- Keplerian orbits, parametric radiation, fault injection, full TMR
 - [x] **v0.2** -- J2 perturbations, selective TMR, transformer faults, TLE/SGP4 ingestion, CI
-- [x] **v0.3** (current) -- Radiation timeline with SAA detection, quantization-aware fault comparison, sensitivity heatmap, ONNX model import
-- [ ] **v0.4** -- Distributed inference across constellation, ISL communication delays
-- [ ] **v0.5** -- Ground station scheduling, downlink-aware task placement, compliance report export
+- [x] **v0.3** -- Radiation timeline with SAA detection, quantization-aware fault comparison, sensitivity heatmap, ONNX model import
+- [x] **v0.4** (current) -- SPENVIS validation, Monte Carlo reliability, mission budget calculator, ground track viz, poliastro import
+- [ ] **v0.5** -- Distributed inference across constellation, ISL communication delays
+- [ ] **v0.6** -- Ground station scheduling, downlink-aware task placement, compliance report export
 
 ---
 
@@ -192,10 +201,10 @@ bandit -r src/ -c pyproject.toml -ll
 Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, standards, and CLA.
 
 **Focus areas:**
-- More realistic radiation models (AP-9/AE-9 integration)
-- Additional chip profiles (Jetson Orin, Versal AI Edge)
+- Distributed inference across ISL links
 - Ground station downlink scheduling
-- Distributed inference simulation across ISL links
+- ECSS compliance report export
+- More chip profiles and radiation model refinements
 
 For security vulnerabilities, see [SECURITY.md](SECURITY.md).
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "space-ml-sim"
-version = "0.3.0"
+version = "0.4.0"
 description = "Simulation framework for AI inference on orbital satellite constellations"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
@@ -42,6 +42,7 @@ dev = [
     "pre-commit>=3.0",
 ]
 onnx = ["onnxruntime>=1.16", "onnx>=1.14"]
+poliastro = ["poliastro>=0.17", "astropy>=5.0"]
 
 [tool.ruff]
 line-length = 100
