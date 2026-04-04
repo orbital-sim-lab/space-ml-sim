@@ -1,0 +1,27 @@
+space-ml-sim
+Copyright 2026 space-ml-sim contributors
+
+This software is licensed under the GNU Affero General Public License v3.0.
+See the LICENSE file for the full license text.
+
+A commercial license is available for proprietary use.
+See COMMERCIAL_LICENSE.md for details.
+
+---
+
+This product includes software developed by third parties:
+
+- PyTorch (https://pytorch.org/) — BSD-style license
+- NumPy (https://numpy.org/) — BSD license
+- Pydantic (https://pydantic.dev/) — MIT license
+- Plotly (https://plotly.com/) — MIT license
+- SGP4 (https://github.com/brandon-rhodes/python-sgp4) — MIT license
+- pandas (https://pandas.pydata.org/) — BSD-3-Clause license
+- Rich (https://github.com/Textualize/rich) — MIT license
+
+Optional dependencies:
+- ONNX Runtime (https://onnxruntime.ai/) — MIT license
+- ONNX (https://onnx.ai/) — Apache-2.0 license
+
+Chip profile data is derived from publicly available manufacturer specifications
+and published research papers. No proprietary or classified data is included.
