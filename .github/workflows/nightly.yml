@@ -1,0 +1,72 @@
+name: Nightly Accuracy & Regression Check
+
+on:
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  accuracy-validation:
+    name: Accuracy Validation Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install torchvision pytest-cov
+
+      - name: Run accuracy validation tests
+        run: |
+          python -m pytest tests/test_accuracy_validation.py -v \
+            --tb=long --strict-markers
+
+      - name: Run full test suite with coverage
+        run: |
+          python -m pytest tests/ -v \
+            --cov=space_ml_sim \
+            --cov-report=term-missing \
+            --cov-fail-under=80
+
+      - name: Run performance benchmarks
+        run: |
+          python -c "
+          import time, json, copy, torch, torch.nn as nn
+          from space_ml_sim.compute.fault_injector import FaultInjector
+          from space_ml_sim.environment.radiation import RadiationEnvironment
+          from space_ml_sim.models.chip_profiles import TERAFAB_D3
+          from space_ml_sim.core import Constellation
+
+          results = {}
+
+          model = nn.Sequential(nn.Linear(512, 512), nn.ReLU(), nn.Linear(512, 10))
+          injector = FaultInjector(RadiationEnvironment.leo_500km(), TERAFAB_D3)
+          start = time.perf_counter()
+          for _ in range(50):
+              m = copy.deepcopy(model)
+              injector.inject_weight_faults(m, num_faults=1000)
+          results['fault_injection_1k_ms'] = round((time.perf_counter() - start) / 50 * 1000, 2)
+
+          c = Constellation.walker_delta(10, 10, 550, 53, TERAFAB_D3)
+          start = time.perf_counter()
+          for _ in range(10):
+              c.step(dt_seconds=60.0)
+          results['constellation_step_100sats_ms'] = round((time.perf_counter() - start) / 10 * 1000, 2)
+
+          print('=== NIGHTLY BENCHMARK RESULTS ===')
+          for k, v in results.items():
+              print(f'{k}: {v} ms')
+
+          assert results['fault_injection_1k_ms'] < 500
+          assert results['constellation_step_100sats_ms'] < 1000
+          print('All benchmarks within limits.')
+          "
