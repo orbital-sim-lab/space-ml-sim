@@ -18,6 +18,14 @@ SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Goo
 
 **Fault tolerance** -- Full TMR, selective TMR (per-layer vulnerability ranking), and checkpoint rollback with majority voting and anomaly detection
 
+**Radiation timeline** -- Generate time-series radiation exposure from real TLEs with SAA crossing detection and visualization
+
+**Quantization comparison** -- Compare FP32/FP16/INT8 fault resilience curves for the same model in one call
+
+**Sensitivity heatmap** -- Visual per-layer vulnerability ranking showing which layers need protection
+
+**ONNX import** -- Load `.onnx` models for fault injection without writing PyTorch code (`pip install space-ml-sim[onnx]`)
+
 **Hardware profiles** -- TERAFAB D3, Google Trillium TPU v6e, BAE RAD5500, NOEL-V RISC-V
 
 ---
@@ -151,7 +159,7 @@ Every PR is automatically checked by CI before merge:
 
 | Check | What it does |
 |-------|-------------|
-| **Tests + Coverage** | 395 tests, 80% minimum coverage enforced |
+| **Tests + Coverage** | 494 tests, 80% minimum coverage enforced |
 | **Lint & Format** | `ruff check` + `ruff format` |
 | **Security Scan** | `pip-audit` (dependency CVEs) + `bandit` (code security) |
 | **License Compliance** | Verifies all dependencies are AGPL-compatible |
@@ -172,10 +180,10 @@ bandit -r src/ -c pyproject.toml -ll
 ## Roadmap
 
 - [x] **v0.1** -- Keplerian orbits, parametric radiation, fault injection, full TMR
-- [x] **v0.2** (current) -- J2 perturbations, selective TMR, transformer faults, TLE/SGP4 ingestion, CI
-- [ ] **v0.3** -- Distributed inference across constellation, ISL communication delays
-- [ ] **v0.4** -- Quantization-aware fault injection, mixed-precision vulnerability analysis
-- [ ] **v0.5** -- Ground station scheduling, downlink-aware task placement
+- [x] **v0.2** -- J2 perturbations, selective TMR, transformer faults, TLE/SGP4 ingestion, CI
+- [x] **v0.3** (current) -- Radiation timeline with SAA detection, quantization-aware fault comparison, sensitivity heatmap, ONNX model import
+- [ ] **v0.4** -- Distributed inference across constellation, ISL communication delays
+- [ ] **v0.5** -- Ground station scheduling, downlink-aware task placement, compliance report export
 
 ---
 

@@ -7,8 +7,8 @@ authors:
 repository-code: "https://github.com/yaitsmesj/space-ml-sim"
 url: "https://github.com/yaitsmesj/space-ml-sim"
 license: AGPL-3.0-or-later
-version: 0.2.0
-date-released: "2026-03-26"
+version: 0.3.0
+date-released: "2026-04-04"
 keywords:
   - satellite
   - space radiation

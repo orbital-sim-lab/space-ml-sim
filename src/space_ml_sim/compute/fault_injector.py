@@ -78,12 +78,19 @@ class FaultInjector:
         if n == 0:
             return []
 
-        # Vectorized bit flipping — avoid Python loop for performance
-        indices = torch.randint(0, n, (num_flips,))
-        bit_positions = torch.randint(0, 32, (num_flips,))
-        masks = (1 << bit_positions).to(torch.int32)
+        # Map float dtype to corresponding integer dtype for bit manipulation
+        dtype_map = {
+            torch.float32: (torch.int32, 32),
+            torch.float16: (torch.int16, 16),
+            torch.bfloat16: (torch.int16, 16),
+        }
+        int_dtype, num_bits = dtype_map.get(flat.dtype, (torch.int32, 32))
 
-        int_view = flat.view(torch.int32)
+        indices = torch.randint(0, n, (num_flips,))
+        bit_positions = torch.randint(0, num_bits, (num_flips,))
+        masks = (1 << bit_positions).to(int_dtype)
+
+        int_view = flat.view(int_dtype)
         for i in range(num_flips):
             int_view[indices[i]] ^= masks[i]
 
