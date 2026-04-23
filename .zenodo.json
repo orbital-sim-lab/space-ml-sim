@@ -1,0 +1,44 @@
+{
+  "title": "space-ml-sim: Simulation Framework for AI Inference on Orbital Satellite Constellations",
+  "description": "A simulation framework for studying the effects of space radiation on AI inference running aboard orbital satellite constellations. Features SPENVIS-validated radiation models, ML-aware fault injection into PyTorch/ONNX models, TMR fault tolerance, distributed inference across inter-satellite links, ground station scheduling, link-budget analysis, and ECSS/MIL-STD-compliant mission report generation.",
+  "creators": [
+    {
+      "name": "space-ml-sim contributors",
+      "affiliation": "Orbital Sim Lab"
+    }
+  ],
+  "license": "AGPL-3.0-or-later",
+  "access_right": "open",
+  "upload_type": "software",
+  "keywords": [
+    "satellite",
+    "space radiation",
+    "fault injection",
+    "neural network reliability",
+    "triple modular redundancy",
+    "orbital computing",
+    "LEO",
+    "constellation",
+    "SEU",
+    "TID",
+    "SPENVIS",
+    "distributed inference",
+    "federated learning",
+    "ISL",
+    "ground station",
+    "ECSS",
+    "MIL-STD"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/orbital-sim-lab/space-ml-sim",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://pypi.org/project/space-ml-sim/",
+      "relation": "isIdenticalTo",
+      "resource_type": "software"
+    }
+  ]
+}

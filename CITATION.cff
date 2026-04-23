@@ -4,11 +4,24 @@ message: "If you use this software in your research, please cite it using the me
 type: software
 authors:
   - name: "space-ml-sim contributors"
-repository-code: "https://github.com/orbital-sim-project/space-ml-sim"
-url: "https://github.com/orbital-sim-project/space-ml-sim"
+    website: "https://github.com/orbital-sim-lab/space-ml-sim"
+repository-code: "https://github.com/orbital-sim-lab/space-ml-sim"
+url: "https://github.com/orbital-sim-lab/space-ml-sim"
 license: AGPL-3.0-or-later
 version: 0.5.0
 date-released: "2026-04-04"
+identifiers:
+  - type: url
+    value: "https://github.com/orbital-sim-lab/space-ml-sim"
+    description: "Source code repository"
+  - type: url
+    value: "https://pypi.org/project/space-ml-sim/"
+    description: "PyPI distribution"
+  # After Zenodo integration is enabled and a release is minted, replace
+  # the placeholder below with the actual DOI from Zenodo:
+  # - type: doi
+  #   value: "10.5281/zenodo.XXXXXXX"
+  #   description: "Archived software release"
 keywords:
   - satellite
   - space radiation
@@ -17,10 +30,20 @@ keywords:
   - triple modular redundancy
   - orbital computing
   - LEO
+  - constellation
+  - SEU
+  - TID
+  - SPENVIS
+  - distributed inference
+  - federated learning
+  - ISL
+  - ground station
 abstract: >-
   space-ml-sim is a simulation framework for studying the effects of
   space radiation on AI inference running aboard orbital satellite
-  constellations. It provides parametric radiation environment models,
-  ML-aware fault injection into PyTorch models, fault tolerance
-  strategies (TMR, selective TMR, checkpoint rollback), and orbital
-  mechanics for LEO constellation simulation.
+  constellations. It provides parametric radiation environment models
+  cross-validated against ESA's SPENVIS reference data, ML-aware fault
+  injection into PyTorch and ONNX models, fault tolerance strategies
+  (TMR, selective TMR, checkpoint rollback), distributed inference
+  across inter-satellite links, ground station scheduling, link-budget
+  analysis, and ECSS/MIL-STD-compliant mission report generation.
