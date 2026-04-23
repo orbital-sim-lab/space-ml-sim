@@ -47,7 +47,7 @@ pip install space-ml-sim
 From source:
 
 ```bash
-git clone https://github.com/yaitsmesj/space-ml-sim.git
+git clone https://github.com/orbital-sim-project/space-ml-sim.git
 cd space-ml-sim
 pip install -e ".[dev]"
 ```

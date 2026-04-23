@@ -1,18 +1,18 @@
 # Default owner for everything
-* @yaitsmesj
+* @orbital-sim-project/maintainers
 
 # Critical paths — require explicit review from maintainer
-src/space_ml_sim/compute/fault_injector.py @yaitsmesj
-src/space_ml_sim/compute/tmr.py @yaitsmesj
-src/space_ml_sim/compute/transformer_fault.py @yaitsmesj
-src/space_ml_sim/environment/radiation.py @yaitsmesj
-src/space_ml_sim/core/orbit.py @yaitsmesj
-src/space_ml_sim/models/chip_profiles.py @yaitsmesj
+src/space_ml_sim/compute/fault_injector.py @orbital-sim-project/maintainers
+src/space_ml_sim/compute/tmr.py @orbital-sim-project/maintainers
+src/space_ml_sim/compute/transformer_fault.py @orbital-sim-project/maintainers
+src/space_ml_sim/environment/radiation.py @orbital-sim-project/maintainers
+src/space_ml_sim/core/orbit.py @orbital-sim-project/maintainers
+src/space_ml_sim/models/chip_profiles.py @orbital-sim-project/maintainers
 
 # License and legal
-LICENSE @yaitsmesj
-COMMERCIAL_LICENSE.md @yaitsmesj
+LICENSE @orbital-sim-project/maintainers
+COMMERCIAL_LICENSE.md @orbital-sim-project/maintainers
 
 # CI and security
-.github/ @yaitsmesj
-pyproject.toml @yaitsmesj
+.github/ @orbital-sim-project/maintainers
+pyproject.toml @orbital-sim-project/maintainers

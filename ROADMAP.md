@@ -27,9 +27,7 @@
 - [x] Deterministic accuracy validation suite (37 tests against analytical solutions)
 - [x] Published to PyPI
 
-## In Progress
-
-### v0.4 (Accuracy & Integration) — Current
+### v0.4 (Accuracy & Integration)
 Focus: Make the simulation results trustworthy enough for flight qualification support.
 
 - [x] Validate SEU rates against SPENVIS AP-9/AE-9 reference data
@@ -38,23 +36,54 @@ Focus: Make the simulation results trustworthy enough for flight qualification s
 - [x] Integrate with poliastro for orbit objects import
 - [x] Add mission lifetime reliability estimation (Monte Carlo)
 - [x] Add per-orbit SEU/TID budget calculator
-- [ ] Create Jupyter notebook tutorial series (3 exercises for university courses)
+- [x] Create Jupyter notebook tutorial series (3 exercises for university courses)
 
-### v0.5 (Distributed & Communication) — Target: Jul 2026
+### v0.5 (Distributed & Communication)
 Focus: Simulate realistic multi-satellite compute scenarios.
 
-- [ ] Distributed inference across ISL links with latency modeling
-- [ ] Ground station visibility and downlink scheduling
-- [ ] Model-parallel inference across constellation members
-- [ ] Bandwidth-constrained gradient aggregation for federated learning
+- [x] Distributed inference across ISL links with latency modeling
+- [x] Ground station visibility and downlink scheduling
+- [x] Model-parallel inference across constellation members
+- [x] Bandwidth-constrained gradient aggregation for federated learning
 
-### v0.6 (Compliance & Enterprise) — Target: Sep 2026
+### v0.6 (Compliance & Enterprise)
 Focus: Make the tool usable in flight qualification workflows.
 
-- [ ] ECSS-Q-ST-60-15C compliance report export (PDF)
-- [ ] MIL-STD-883 TM 1019 test methodology documentation
-- [ ] Integration with radiation test facility data formats
-- [ ] Automated TMR recommendation engine with cost/benefit analysis
+- [x] ECSS-Q-ST-60-15C compliance report export (HTML, print-to-PDF)
+- [x] MIL-STD-883 TM 1019 test methodology documentation
+- [x] Integration with radiation test facility data formats (CSV import)
+- [x] Automated TMR recommendation engine with cost/benefit analysis
+
+### v0.7 (Individual User & Adoption)
+Focus: Features that drive individual user adoption and licensing.
+
+- [x] CLI tool (`space-ml-sim trade-study`, `report`, `chips`)
+- [x] Constellation presets (Starlink, OneWeb, Kuiper, Iridium, Planet)
+- [x] Shielding optimization recommender with mass penalty analysis
+- [x] Solar cycle radiation presets (solar min/max/ascending/descending)
+- [x] 3 additional rad-hard chip profiles (SAMRH71, GR740, XQRKU060) — 10 total
+- [x] Mission trade-study comparison API with DataFrame export
+- [x] Weibull cross-section curve fitting for test data
+- [x] Radiation uncertainty quantification (confidence intervals)
+
+### v0.8 (Revenue Features)
+Focus: Features that directly generate individual user revenue.
+
+- [x] RF/optical link budget calculator (FSPL, EIRP, G/T, margin, Shannon capacity)
+- [x] Requirements traceability matrix (RTM) generator with auto-generation from simulation
+- [x] Orbital thermal cycling model (eclipse/sunlit transitions, component derating)
+- [x] Frequency band presets (UHF, S, X, Ku, Ka, V, optical)
+
+### v0.9 (Market Expansion)
+Focus: Expand addressable market beyond LEO, add mission-critical analysis tools.
+
+- [x] MEO/GEO radiation environment (Van Allen belt parametric model)
+- [x] Power budget calculator (solar/battery/eclipse analysis)
+- [x] Dose-depth curve analysis with shielding optimization
+- [x] End-to-end mission analysis pipeline (radiation + thermal + link + risk)
+- [x] SEL (Single Event Latchup) modeling with mission probability
+- [x] Expanded CLI (analyze, link-budget, constellations commands)
+- [x] MEO/GEO factory presets (GPS, GEO orbits)
 
 ## Accuracy Priorities
 
@@ -62,8 +91,8 @@ Every release must pass the deterministic accuracy validation suite. New feature
 must include analytical validation tests where possible. The following accuracy
 improvements are tracked independently of feature releases:
 
-- [ ] Cross-validate orbit propagation against SGP4 for standard TLEs
+- [x] Cross-validate orbit propagation against SGP4 for standard TLEs
 - [x] Cross-validate radiation rates against published SPENVIS reference orbits
-- [ ] Add uncertainty quantification to radiation model outputs
-- [ ] Validate fault injection statistics against analytical Poisson expectations
-- [ ] Benchmark TMR correction rate against theoretical 2-of-3 voting probability
+- [x] Add uncertainty quantification to radiation model outputs
+- [x] Validate fault injection statistics against analytical Poisson expectations
+- [x] Benchmark TMR correction rate against theoretical 2-of-3 voting probability

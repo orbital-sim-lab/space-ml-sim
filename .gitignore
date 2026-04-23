@@ -24,3 +24,6 @@ data/
 .coverage
 htmlcov/
 .DS_Store
+
+# Claude Code internal
+.claude/

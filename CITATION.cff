@@ -4,10 +4,10 @@ message: "If you use this software in your research, please cite it using the me
 type: software
 authors:
   - name: "space-ml-sim contributors"
-repository-code: "https://github.com/yaitsmesj/space-ml-sim"
-url: "https://github.com/yaitsmesj/space-ml-sim"
+repository-code: "https://github.com/orbital-sim-project/space-ml-sim"
+url: "https://github.com/orbital-sim-project/space-ml-sim"
 license: AGPL-3.0-or-later
-version: 0.3.0
+version: 0.5.0
 date-released: "2026-04-04"
 keywords:
   - satellite

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "space-ml-sim"
-version = "0.4.0"
+version = "0.5.0"
 description = "Simulation framework for AI inference on orbital satellite constellations"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
@@ -30,7 +30,11 @@ dependencies = [
     "pandas>=2.0",
     "plotly>=5.0",
     "rich>=13.0",
+    "click>=8.0",
 ]
+
+[project.scripts]
+space-ml-sim = "space_ml_sim.cli:cli"
 
 [project.optional-dependencies]
 dev = [
