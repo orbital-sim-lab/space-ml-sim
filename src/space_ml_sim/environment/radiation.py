@@ -59,23 +59,21 @@ class RadiationEnvironment(BaseModel):
     def _compute_seu_rate(alt: float, inc: float, shield: float) -> float:
         """Compute SEU rate in upsets/bit/second.
 
-        GCR contribution is relatively flat with altitude.
-        Trapped protons increase exponentially above ~800km.
-        SAA enhancement applies for inclinations 20-60 deg below 1500km.
+        Models GCR (relatively flat) + trapped protons (Van Allen belt profile).
+        Uses a parametric Van Allen belt model with inner belt, slot region,
+        and outer belt components.
         """
         gcr_base = 1e-12  # upsets/bit/sec baseline at 500km/2mm Al
 
-        # Trapped protons increase exponentially above 800km
-        trapped = 0.0
-        if alt > 800:
-            trapped = gcr_base * 10 * ((alt - 800) / 1200) ** 2
+        # Van Allen belt trapped proton profile
+        trapped = _van_allen_seu_profile(alt)
 
-        # SAA enhancement for relevant inclinations
+        # SAA enhancement for relevant inclinations in LEO
         saa_factor = 1.0
         if 20 < inc < 60 and alt < 1500:
-            saa_factor = 3.0  # Average enhancement (SAA is periodic)
+            saa_factor = 3.0
 
-        # Shielding attenuation (roughly exponential, normalized to 1.0 at 0mm)
+        # Shielding attenuation
         shield_factor = math.exp(-0.3 * shield)
 
         return (gcr_base + trapped) * saa_factor * shield_factor
@@ -84,11 +82,13 @@ class RadiationEnvironment(BaseModel):
     def _compute_tid_rate(alt: float, shield: float) -> float:
         """Compute TID rate in krad(Si) per day.
 
-        Dominated by trapped protons; exponential increase with altitude.
+        Uses Van Allen belt profile: inner belt peak ~3000-6000km,
+        slot region ~6000-13000km, outer belt peak ~15000-25000km,
+        decreasing at GEO (~35786km).
         """
-        base_krad_per_year = 0.1 * math.exp(0.003 * (alt - 500))
+        tid_krad_per_year = _van_allen_tid_profile(alt)
         shield_atten = math.exp(-0.5 * shield)
-        return (base_krad_per_year / 365.25) * shield_atten
+        return (tid_krad_per_year / 365.25) * shield_atten
 
     def sample_seu_events(
         self,
@@ -140,6 +140,16 @@ class RadiationEnvironment(BaseModel):
         return cls(altitude_km=2000, inclination_deg=53, shielding_mm_al=2.0)
 
     @classmethod
+    def meo_20200km(cls) -> "RadiationEnvironment":
+        """GPS orbit (~20200km, 55 deg)."""
+        return cls(altitude_km=20200, inclination_deg=55, shielding_mm_al=3.0)
+
+    @classmethod
+    def geo(cls) -> "RadiationEnvironment":
+        """Geostationary orbit (~35786km, 0 deg)."""
+        return cls(altitude_km=35786, inclination_deg=0, shielding_mm_al=3.0)
+
+    @classmethod
     def from_preset(cls, preset: RadPreset) -> "RadiationEnvironment":
         """Create from a named preset."""
         factories = {
@@ -148,3 +158,68 @@ class RadiationEnvironment(BaseModel):
             RadPreset.LEO_2000KM: cls.leo_2000km,
         }
         return factories[preset]()
+
+
+# ---------------------------------------------------------------------------
+# Van Allen belt parametric profiles
+# ---------------------------------------------------------------------------
+
+
+def _van_allen_seu_profile(alt_km: float) -> float:
+    """Trapped proton SEU contribution as a function of altitude.
+
+    Parametric model of the Van Allen belt trapped particle environment:
+    - Below 800km: negligible trapped protons
+    - Inner belt peak (~3000-5000km): highest proton flux
+    - Slot region (~7000-13000km): reduced flux
+    - Outer belt (~15000-25000km): moderate electron flux
+    - GEO (~35786km): low, electron-dominated
+
+    Returns SEU rate contribution in upsets/bit/second.
+    """
+    if alt_km <= 800:
+        return 0.0
+
+    gcr_base = 1e-12
+
+    # Inner belt: Gaussian centered at 4000km, sigma ~1500km
+    inner = 50.0 * gcr_base * math.exp(-((alt_km - 4000) ** 2) / (2 * 1500**2))
+
+    # Outer belt: Gaussian centered at 20000km, sigma ~5000km
+    outer = 20.0 * gcr_base * math.exp(-((alt_km - 20000) ** 2) / (2 * 5000**2))
+
+    # Transition from LEO regime (800-2000km)
+    if alt_km < 2000:
+        ramp = (alt_km - 800) / 1200
+        return ramp * (inner + outer)
+
+    return inner + outer
+
+
+def _van_allen_tid_profile(alt_km: float) -> float:
+    """TID rate as a function of altitude in krad(Si)/year.
+
+    Based on AP-8/AE-8 model parametric fits:
+    - 500km: ~0.1 krad/yr (with 2mm Al)
+    - 4000km: ~100 krad/yr (inner belt peak)
+    - 10000km: ~10 krad/yr (slot region)
+    - 20000km: ~50 krad/yr (outer belt)
+    - 35786km: ~10 krad/yr (GEO, electron-dominated)
+    """
+    if alt_km <= 500:
+        return 0.1
+
+    # LEO transition (500-800km): gentle exponential
+    if alt_km <= 800:
+        return 0.1 * math.exp(0.003 * (alt_km - 500))
+
+    # Inner belt: Gaussian peak at 4000km
+    inner = 100.0 * math.exp(-((alt_km - 4000) ** 2) / (2 * 1200**2))
+
+    # Outer belt: Gaussian peak at 20000km
+    outer = 50.0 * math.exp(-((alt_km - 20000) ** 2) / (2 * 6000**2))
+
+    # Background GCR floor (increases slowly with altitude due to less geomagnetic shielding)
+    gcr_floor = 0.5 + 0.001 * alt_km
+
+    return max(inner + outer + gcr_floor, 0.1)

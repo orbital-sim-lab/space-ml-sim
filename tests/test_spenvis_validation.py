@@ -75,8 +75,8 @@ SEU_REFERENCE_RANGES = {
         "alt": 2000,
         "inc": 53.0,
         "seu_per_bit_per_day_low": 1e-10,
-        "seu_per_bit_per_day_high": 1e-6,
-        "notes": "Trapped proton belt, significantly higher rates",
+        "seu_per_bit_per_day_high": 5e-6,
+        "notes": "Near inner Van Allen belt, high trapped proton rates",
     },
 }
 

@@ -112,6 +112,45 @@ VERSAL_AI_CORE = ChipProfile(
     notes="Space-grade — qualified for 15-year missions, sampling 2026",
 )
 
+SAMRH71 = ChipProfile(
+    name="Microchip SAMRH71F20C (Arm Cortex-M7)",
+    node_nm=65,
+    tdp_watts=1.5,
+    max_temp_c=125,
+    seu_cross_section_cm2=8e-15,
+    tid_tolerance_krad=100,
+    compute_tops=0.0005,
+    memory_bits=2 * 8 * 1024**2,  # 2 MB SRAM
+    notes="Rad-hard MCU — 300 MHz Cortex-M7, ESA-qualified for JUICE mission, "
+          "SEL immune up to 62 MeV·cm²/mg",
+)
+
+GR740 = ChipProfile(
+    name="Cobham Gaisler GR740 (LEON4 quad-core)",
+    node_nm=65,
+    tdp_watts=3.0,
+    max_temp_c=125,
+    seu_cross_section_cm2=5e-15,
+    tid_tolerance_krad=300,
+    compute_tops=0.002,
+    memory_bits=4 * 8 * 1024**2,  # 4 MB on-chip
+    notes="Rad-hard SPARC V8 quad-core — ESA's next-gen OBC processor, "
+          "EDAC on all memories, flying on PLATO and FLEX",
+)
+
+XQRKU060 = ChipProfile(
+    name="AMD Xilinx XQRKU060 (Kintex UltraScale)",
+    node_nm=20,
+    tdp_watts=12,
+    max_temp_c=100,
+    seu_cross_section_cm2=3e-14,
+    tid_tolerance_krad=100,
+    compute_tops=1.5,
+    memory_bits=8 * 8 * 1024**2,  # 8 MB BRAM
+    notes="Space-grade FPGA — most widely used reconfigurable space processor, "
+          "built-in FRAME_ECC for scrubbing, qualified for 15-year missions",
+)
+
 ALL_CHIPS: list[ChipProfile] = [
     TERAFAB_D3,
     TRILLIUM_V6E,
@@ -120,4 +159,7 @@ ALL_CHIPS: list[ChipProfile] = [
     JETSON_AGX_ORIN,
     ZYNQ_ULTRASCALE,
     VERSAL_AI_CORE,
+    SAMRH71,
+    GR740,
+    XQRKU060,
 ]

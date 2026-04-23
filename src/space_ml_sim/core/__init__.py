@@ -12,6 +12,11 @@ from space_ml_sim.core.satellite import Satellite, SatelliteState
 from space_ml_sim.core.constellation import Constellation
 from space_ml_sim.core.clock import SimClock
 from space_ml_sim.core.tle import parse_tle, load_tle_file, propagate_sgp4
+from space_ml_sim.core.constellation_presets import (
+    ConstellationPreset,
+    CONSTELLATION_PRESETS,
+    generate_from_preset,
+)
 
 __all__ = [
     "OrbitConfig",
@@ -27,4 +32,7 @@ __all__ = [
     "parse_tle",
     "load_tle_file",
     "propagate_sgp4",
+    "ConstellationPreset",
+    "CONSTELLATION_PRESETS",
+    "generate_from_preset",
 ]
