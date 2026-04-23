@@ -5,7 +5,7 @@ Thanks for your interest in contributing. This document covers the development w
 ## Getting Started
 
 ```bash
-git clone https://github.com/orbital-sim-project/space-ml-sim.git
+git clone https://github.com/orbital-sim-lab/space-ml-sim.git
 cd space-ml-sim
 pip install -e ".[dev]"
 pre-commit install

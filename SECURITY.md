@@ -15,7 +15,7 @@ If you discover a security vulnerability in `space-ml-sim`, please report it res
 
 Instead:
 
-1. **GitHub Security Advisories** (preferred): Go to the [Security tab](https://github.com/orbital-sim-project/space-ml-sim/security/advisories) and click "Report a vulnerability"
+1. **GitHub Security Advisories** (preferred): Go to the [Security tab](https://github.com/orbital-sim-lab/space-ml-sim/security/advisories) and click "Report a vulnerability"
 2. **Email**: Contact the maintainers via GitHub Issues with the `security` label
 
 ### What to Include

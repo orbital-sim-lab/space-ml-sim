@@ -1,18 +1,18 @@
 # Default owner for everything
-* @orbital-sim-project/maintainers
+* @orbital-sim-lab/maintainers
 
 # Critical paths — require explicit review from maintainer
-src/space_ml_sim/compute/fault_injector.py @orbital-sim-project/maintainers
-src/space_ml_sim/compute/tmr.py @orbital-sim-project/maintainers
-src/space_ml_sim/compute/transformer_fault.py @orbital-sim-project/maintainers
-src/space_ml_sim/environment/radiation.py @orbital-sim-project/maintainers
-src/space_ml_sim/core/orbit.py @orbital-sim-project/maintainers
-src/space_ml_sim/models/chip_profiles.py @orbital-sim-project/maintainers
+src/space_ml_sim/compute/fault_injector.py @orbital-sim-lab/maintainers
+src/space_ml_sim/compute/tmr.py @orbital-sim-lab/maintainers
+src/space_ml_sim/compute/transformer_fault.py @orbital-sim-lab/maintainers
+src/space_ml_sim/environment/radiation.py @orbital-sim-lab/maintainers
+src/space_ml_sim/core/orbit.py @orbital-sim-lab/maintainers
+src/space_ml_sim/models/chip_profiles.py @orbital-sim-lab/maintainers
 
 # License and legal
-LICENSE @orbital-sim-project/maintainers
-COMMERCIAL_LICENSE.md @orbital-sim-project/maintainers
+LICENSE @orbital-sim-lab/maintainers
+COMMERCIAL_LICENSE.md @orbital-sim-lab/maintainers
 
 # CI and security
-.github/ @orbital-sim-project/maintainers
-pyproject.toml @orbital-sim-project/maintainers
+.github/ @orbital-sim-lab/maintainers
+pyproject.toml @orbital-sim-lab/maintainers
