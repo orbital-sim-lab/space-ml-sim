@@ -7,7 +7,6 @@ decreases exponentially with shielding depth.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 import pandas as pd
@@ -27,10 +26,12 @@ class DoseDepthCurve:
 
     def to_dataframe(self) -> pd.DataFrame:
         """Export as DataFrame."""
-        return pd.DataFrame({
-            "shielding_mm_al": list(self.shielding_mm),
-            "dose_krad": list(self.dose_krad),
-        })
+        return pd.DataFrame(
+            {
+                "shielding_mm_al": list(self.shielding_mm),
+                "dose_krad": list(self.dose_krad),
+            }
+        )
 
 
 def generate_dose_depth_curve(

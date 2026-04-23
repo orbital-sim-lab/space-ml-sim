@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import copy
 
-import numpy as np
-import pytest
 import torch
 import torch.nn as nn
 
@@ -84,8 +82,7 @@ class TestTMRCorrectionRate:
 
         # TMR should reduce error rate
         assert p_tmr <= p_unprotected, (
-            f"TMR error rate ({p_tmr:.4f}) should be <= "
-            f"unprotected ({p_unprotected:.4f})"
+            f"TMR error rate ({p_tmr:.4f}) should be <= unprotected ({p_unprotected:.4f})"
         )
 
     def test_tmr_error_rate_near_theoretical(self) -> None:

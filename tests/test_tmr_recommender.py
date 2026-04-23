@@ -11,8 +11,6 @@ The TMR recommender:
 
 from __future__ import annotations
 
-import pytest
-import torch
 import torch.nn as nn
 
 
@@ -71,7 +69,7 @@ class TestTMRRecommendation:
             sensitivity=MOCK_SENSITIVITY,
         )
         # Ranked layers should be in descending order of vulnerability
-        drops = [MOCK_SENSITIVITY[l] for l in rec.ranked_layers]
+        drops = [MOCK_SENSITIVITY[layer] for layer in rec.ranked_layers]
         assert drops == sorted(drops, reverse=True)
 
 

@@ -7,7 +7,6 @@ Supports importing SEE test data from CSV files with standard columns
 from __future__ import annotations
 
 import io
-import pytest
 
 
 SAMPLE_CSV = """\
@@ -59,6 +58,7 @@ class TestRadTestDataImport:
         records = load_rad_test_csv(io.StringIO(SAMPLE_CSV))
 
         from space_ml_sim.data.rad_test_data import to_dataframe
+
         df = to_dataframe(records)
         assert len(df) == 5
         assert "let_mev_cm2_mg" in df.columns
@@ -85,7 +85,7 @@ class TestCrossSectionCurve:
         lets, xsecs = cross_section_curve(records)
 
         # Filter to non-zero cross-sections
-        nonzero = [(l, x) for l, x in zip(lets, xsecs) if x > 0]
+        nonzero = [(let, x) for let, x in zip(lets, xsecs) if x > 0]
         if len(nonzero) > 1:
             for i in range(len(nonzero) - 1):
                 assert nonzero[i + 1][1] >= nonzero[i][1] * 0.5, (

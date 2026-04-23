@@ -12,7 +12,6 @@ import time
 from dataclasses import dataclass
 
 import torch
-import torch.nn as nn
 
 from space_ml_sim.environment.isl_network import ISLNetwork
 

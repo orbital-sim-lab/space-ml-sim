@@ -7,10 +7,8 @@ if the satellite has sufficient power for AI inference.
 
 from __future__ import annotations
 
-import pytest
 
 from space_ml_sim.core.orbit import OrbitConfig
-from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E
 
 
 class TestPowerBudgetCreation:
@@ -39,7 +37,9 @@ class TestPowerBudgetCreation:
 
     def test_result_has_key_metrics(self) -> None:
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
@@ -64,7 +64,9 @@ class TestPowerMargins:
 
     def test_sufficient_power_is_positive(self) -> None:
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
@@ -82,7 +84,9 @@ class TestPowerMargins:
 
     def test_insufficient_power_is_negative(self) -> None:
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
@@ -99,7 +103,9 @@ class TestPowerMargins:
 
     def test_tmr_increases_compute_load(self) -> None:
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
@@ -121,7 +127,9 @@ class TestBatteryAnalysis:
 
     def test_battery_sufficient_for_eclipse(self) -> None:
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
@@ -139,7 +147,9 @@ class TestBatteryAnalysis:
     def test_eclipse_compute_duty_cycle(self) -> None:
         """Report how much compute can run during eclipse."""
         from space_ml_sim.analysis.power_budget import (
-            PowerBudget, SolarArrayConfig, BatteryConfig,
+            PowerBudget,
+            SolarArrayConfig,
+            BatteryConfig,
         )
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)

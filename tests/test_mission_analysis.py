@@ -6,8 +6,6 @@ Single entry point that runs: orbit -> radiation -> thermal -> link budget
 
 from __future__ import annotations
 
-import pytest
-import torch.nn as nn
 
 from space_ml_sim.core.orbit import OrbitConfig
 from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E
@@ -37,7 +35,9 @@ class TestMissionAnalysis:
 
         result = run_mission_analysis(
             mission_name="FULL-TEST",
-            orbit=OrbitConfig(altitude_km=550, inclination_deg=97.6, raan_deg=0, true_anomaly_deg=0),
+            orbit=OrbitConfig(
+                altitude_km=550, inclination_deg=97.6, raan_deg=0, true_anomaly_deg=0
+            ),
             chip=TRILLIUM_V6E,
             mission_years=3.0,
         )

@@ -239,7 +239,6 @@ def generate_ecss_report(
     Returns:
         Complete HTML report string.
     """
-    import math
 
     mission_days = mission_duration_years * 365.25
     seus_per_day = expected_seus_per_orbit * (86400 / _orbital_period_seconds(orbit))
@@ -289,19 +288,17 @@ def generate_ecss_report(
 
     # Risk levels
     seu_risk_level = (
-        "LOW" if expected_seus_per_orbit < 1
-        else "MEDIUM" if expected_seus_per_orbit < 10
+        "LOW"
+        if expected_seus_per_orbit < 1
+        else "MEDIUM"
+        if expected_seus_per_orbit < 10
         else "HIGH"
     )
     tid_risk_level = (
-        "LOW" if tid_over_mission < 5_000
-        else "MEDIUM" if tid_over_mission < 50_000
-        else "HIGH"
+        "LOW" if tid_over_mission < 5_000 else "MEDIUM" if tid_over_mission < 50_000 else "HIGH"
     )
     unprotected_risk_level = (
-        "LOW" if compute_multiplier >= 2.5
-        else "MEDIUM" if compute_multiplier >= 1.5
-        else "HIGH"
+        "LOW" if compute_multiplier >= 2.5 else "MEDIUM" if compute_multiplier >= 1.5 else "HIGH"
     )
 
     # Recommendations
@@ -324,9 +321,7 @@ def generate_ecss_report(
         "<li>Validate simulation results against radiation test facility data "
         "before flight qualification</li>"
     )
-    recs.append(
-        "<li>Perform periodic on-orbit health checks to detect TID degradation</li>"
-    )
+    recs.append("<li>Perform periodic on-orbit health checks to detect TID degradation</li>")
 
     return _REPORT_TEMPLATE.format(
         mission_name=mission_name,

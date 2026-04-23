@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-import numpy as np
-
 
 class TestWeibullFit:
     """Fit Weibull function to cross-section vs LET test data."""
@@ -43,6 +40,6 @@ class TestWeibullFit:
 
         result = fit_weibull(let_values, xsec_values)
 
-        predictions = [result.predict(l) for l in [5, 10, 20, 40, 80]]
+        predictions = [result.predict(let) for let in [5, 10, 20, 40, 80]]
         for i in range(len(predictions) - 1):
             assert predictions[i + 1] >= predictions[i]

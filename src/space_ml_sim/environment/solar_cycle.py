@@ -25,17 +25,17 @@ SOLAR_PHASES: tuple[str, ...] = (
 # At low altitude: dominated by GCR (higher at solar min)
 # At high altitude: dominated by trapped protons (higher at solar max)
 _SEU_GCR_FACTOR = {
-    "solar_min": 1.3,       # GCR 30% higher at solar min
+    "solar_min": 1.3,  # GCR 30% higher at solar min
     "solar_ascending": 1.1,
-    "solar_max": 0.7,       # GCR 30% lower at solar max
+    "solar_max": 0.7,  # GCR 30% lower at solar max
     "solar_descending": 0.9,
     "average": 1.0,
 }
 
 _SEU_TRAPPED_FACTOR = {
-    "solar_min": 0.5,       # Trapped protons ~50% lower at solar min
+    "solar_min": 0.5,  # Trapped protons ~50% lower at solar min
     "solar_ascending": 0.8,
-    "solar_max": 2.0,       # Trapped protons ~2x at solar max
+    "solar_max": 2.0,  # Trapped protons ~2x at solar max
     "solar_descending": 1.2,
     "average": 1.0,
 }
@@ -71,10 +71,7 @@ def apply_solar_cycle(
         ValueError: If phase is not recognized.
     """
     if phase not in SOLAR_PHASES:
-        raise ValueError(
-            f"Unknown solar cycle phase: {phase!r}. "
-            f"Must be one of {SOLAR_PHASES}"
-        )
+        raise ValueError(f"Unknown solar cycle phase: {phase!r}. Must be one of {SOLAR_PHASES}")
 
     # Blend GCR and trapped contributions based on altitude
     # Below 800km: ~90% GCR, 10% trapped
@@ -88,10 +85,7 @@ def apply_solar_cycle(
         gcr_weight = 0.9 - 0.6 * (alt - 800) / 700
     trapped_weight = 1.0 - gcr_weight
 
-    seu_factor = (
-        gcr_weight * _SEU_GCR_FACTOR[phase]
-        + trapped_weight * _SEU_TRAPPED_FACTOR[phase]
-    )
+    seu_factor = gcr_weight * _SEU_GCR_FACTOR[phase] + trapped_weight * _SEU_TRAPPED_FACTOR[phase]
     tid_factor = _TID_FACTOR[phase]
 
     new_seu_rate = rad_env.base_seu_rate * seu_factor

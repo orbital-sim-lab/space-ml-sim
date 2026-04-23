@@ -11,9 +11,6 @@ Covers RF downlink/uplink and optical ISL link budgets with:
 
 from __future__ import annotations
 
-import math
-import pytest
-
 
 class TestFrequencyBands:
     """Standard frequency band presets."""

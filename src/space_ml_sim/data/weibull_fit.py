@@ -40,7 +40,7 @@ class WeibullFitResult:
         if let <= self.threshold_let:
             return 0.0
         x = (let - self.threshold_let) / self.width
-        return self.saturation_xsec * (1.0 - math.exp(-(x ** self.shape)))
+        return self.saturation_xsec * (1.0 - math.exp(-(x**self.shape)))
 
 
 def fit_weibull(
@@ -112,5 +112,5 @@ def _weibull_predict(
     result = np.zeros_like(lets)
     mask = lets > threshold
     x = (lets[mask] - threshold) / width
-    result[mask] = saturation * (1.0 - np.exp(-(x ** shape)))
+    result[mask] = saturation * (1.0 - np.exp(-(x**shape)))
     return result

@@ -8,7 +8,6 @@ The CLI enables quick analysis without writing Python:
 
 from __future__ import annotations
 
-import pytest
 from click.testing import CliRunner
 
 
@@ -41,12 +40,18 @@ class TestCLITradeStudy:
         from space_ml_sim.cli import cli
 
         runner = CliRunner()
-        result = runner.invoke(cli, [
-            "trade-study",
-            "--orbit", "550/53",
-            "--chip", "RAD5500",
-            "--tmr", "none",
-        ])
+        result = runner.invoke(
+            cli,
+            [
+                "trade-study",
+                "--orbit",
+                "550/53",
+                "--chip",
+                "RAD5500",
+                "--tmr",
+                "none",
+            ],
+        )
         assert result.exit_code == 0
         assert "SEU" in result.output or "seu" in result.output
 
@@ -54,25 +59,38 @@ class TestCLITradeStudy:
         from space_ml_sim.cli import cli
 
         runner = CliRunner()
-        result = runner.invoke(cli, [
-            "trade-study",
-            "--orbit", "550/53",
-            "--chip", "RAD5500",
-            "--chip", "TRILLIUM_V6E",
-            "--tmr", "full_tmr",
-        ])
+        result = runner.invoke(
+            cli,
+            [
+                "trade-study",
+                "--orbit",
+                "550/53",
+                "--chip",
+                "RAD5500",
+                "--chip",
+                "TRILLIUM_V6E",
+                "--tmr",
+                "full_tmr",
+            ],
+        )
         assert result.exit_code == 0
 
     def test_with_shielding(self) -> None:
         from space_ml_sim.cli import cli
 
         runner = CliRunner()
-        result = runner.invoke(cli, [
-            "trade-study",
-            "--orbit", "550/53",
-            "--chip", "RAD5500",
-            "--shielding", "5.0",
-        ])
+        result = runner.invoke(
+            cli,
+            [
+                "trade-study",
+                "--orbit",
+                "550/53",
+                "--chip",
+                "RAD5500",
+                "--shielding",
+                "5.0",
+            ],
+        )
         assert result.exit_code == 0
 
 
@@ -84,14 +102,22 @@ class TestCLIReport:
 
         output = tmp_path / "report.html"
         runner = CliRunner()
-        result = runner.invoke(cli, [
-            "report",
-            "--type", "ecss",
-            "--orbit", "550/97.6",
-            "--chip", "TRILLIUM_V6E",
-            "--mission-years", "5",
-            "--output", str(output),
-        ])
+        result = runner.invoke(
+            cli,
+            [
+                "report",
+                "--type",
+                "ecss",
+                "--orbit",
+                "550/97.6",
+                "--chip",
+                "TRILLIUM_V6E",
+                "--mission-years",
+                "5",
+                "--output",
+                str(output),
+            ],
+        )
         assert result.exit_code == 0
         assert output.exists()
         content = output.read_text()

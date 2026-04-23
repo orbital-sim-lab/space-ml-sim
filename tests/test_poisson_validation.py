@@ -11,8 +11,6 @@ threshold to avoid flaky failures while catching genuine distribution bugs.
 from __future__ import annotations
 
 import numpy as np
-import pytest
-import torch
 import torch.nn as nn
 
 from space_ml_sim.environment.radiation import RadiationEnvironment
@@ -34,7 +32,6 @@ class TestPoissonFaultDistribution:
     def test_mean_matches_expected_rate(self) -> None:
         """Average sampled faults should approximate the Poisson lambda."""
         rad_env = RadiationEnvironment.leo_2000km()  # Higher rate for better statistics
-        injector = FaultInjector(rad_env=rad_env, chip_profile=RAD5500, seed=42)
 
         model = _make_model()
         total_bits = sum(p.numel() * 32 for p in model.parameters())
@@ -48,7 +45,9 @@ class TestPoissonFaultDistribution:
         for i in range(n_trials):
             m = _make_model()
             inj = FaultInjector(rad_env=rad_env, chip_profile=RAD5500, seed=i)
-            report = inj.inject_weight_faults(m, num_faults=None, inference_time_seconds=inference_time)
+            report = inj.inject_weight_faults(
+                m, num_faults=None, inference_time_seconds=inference_time
+            )
             fault_counts.append(report.total_faults_injected)
 
         observed_mean = np.mean(fault_counts)
@@ -61,8 +60,6 @@ class TestPoissonFaultDistribution:
     def test_variance_matches_mean(self) -> None:
         """For Poisson, variance should approximately equal the mean."""
         rad_env = RadiationEnvironment.leo_2000km()
-        model = _make_model()
-        total_bits = sum(p.numel() * 32 for p in model.parameters())
         inference_time = 10.0
 
         n_trials = 500
@@ -70,7 +67,9 @@ class TestPoissonFaultDistribution:
         for i in range(n_trials):
             m = _make_model()
             inj = FaultInjector(rad_env=rad_env, chip_profile=RAD5500, seed=i + 1000)
-            report = inj.inject_weight_faults(m, num_faults=None, inference_time_seconds=inference_time)
+            report = inj.inject_weight_faults(
+                m, num_faults=None, inference_time_seconds=inference_time
+            )
             fault_counts.append(report.total_faults_injected)
 
         observed_mean = np.mean(fault_counts)

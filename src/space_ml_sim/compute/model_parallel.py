@@ -116,9 +116,7 @@ class PipelineExecutor:
                 path = self.network.shortest_path(src, dst)
                 if path is not None and len(path) > 1:
                     for j in range(len(path) - 1):
-                        comm_ms += self.network.transfer_time_ms(
-                            path[j], path[j + 1], act_bytes
-                        )
+                        comm_ms += self.network.transfer_time_ms(path[j], path[j + 1], act_bytes)
 
         # Final predictions
         predictions = activation.argmax(dim=1).tolist()

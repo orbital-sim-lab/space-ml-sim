@@ -118,15 +118,13 @@ class TestTIDAgainstSPENVIS:
         altitudes = [400, 600, 800, 1000, 1500, 2000]
         tids = []
         for alt in altitudes:
-            env = RadiationEnvironment(
-                altitude_km=alt, inclination_deg=53.0, shielding_mm_al=2.0
-            )
+            env = RadiationEnvironment(altitude_km=alt, inclination_deg=53.0, shielding_mm_al=2.0)
             tids.append(env.tid_rate_krad_per_day)
 
         for i in range(1, len(tids)):
             assert tids[i] > tids[i - 1], (
-                f"TID did not increase from {altitudes[i-1]}km "
-                f"({tids[i-1]:.6f}) to {altitudes[i]}km ({tids[i]:.6f})"
+                f"TID did not increase from {altitudes[i - 1]}km "
+                f"({tids[i - 1]:.6f}) to {altitudes[i]}km ({tids[i]:.6f})"
             )
 
     def test_tid_decreases_with_shielding(self) -> None:
@@ -134,15 +132,13 @@ class TestTIDAgainstSPENVIS:
         shields = [0.5, 1.0, 2.0, 5.0, 10.0]
         tids = []
         for s in shields:
-            env = RadiationEnvironment(
-                altitude_km=800, inclination_deg=98.0, shielding_mm_al=s
-            )
+            env = RadiationEnvironment(altitude_km=800, inclination_deg=98.0, shielding_mm_al=s)
             tids.append(env.tid_rate_krad_per_day)
 
         for i in range(1, len(tids)):
             assert tids[i] < tids[i - 1], (
-                f"TID did not decrease from {shields[i-1]}mm "
-                f"({tids[i-1]:.6f}) to {shields[i]}mm ({tids[i]:.6f})"
+                f"TID did not decrease from {shields[i - 1]}mm "
+                f"({tids[i - 1]:.6f}) to {shields[i]}mm ({tids[i]:.6f})"
             )
 
     def test_2000km_tid_much_higher_than_500km(self) -> None:
@@ -150,16 +146,10 @@ class TestTIDAgainstSPENVIS:
 
         This is a well-established result from trapped proton models.
         """
-        env_500 = RadiationEnvironment(
-            altitude_km=500, inclination_deg=53.0, shielding_mm_al=2.0
-        )
-        env_2000 = RadiationEnvironment(
-            altitude_km=2000, inclination_deg=53.0, shielding_mm_al=2.0
-        )
+        env_500 = RadiationEnvironment(altitude_km=500, inclination_deg=53.0, shielding_mm_al=2.0)
+        env_2000 = RadiationEnvironment(altitude_km=2000, inclination_deg=53.0, shielding_mm_al=2.0)
         ratio = env_2000.tid_rate_krad_per_day / env_500.tid_rate_krad_per_day
-        assert ratio > 10, (
-            f"2000km/500km TID ratio is only {ratio:.1f}x, expected >10x"
-        )
+        assert ratio > 10, f"2000km/500km TID ratio is only {ratio:.1f}x, expected >10x"
 
 
 class TestSEURatesAgainstLiterature:
@@ -193,24 +183,16 @@ class TestSEURatesAgainstLiterature:
 
     def test_seu_increases_with_altitude(self) -> None:
         """SEU rate must increase with altitude overall (more particle flux)."""
-        env_500 = RadiationEnvironment(
-            altitude_km=500, inclination_deg=53.0, shielding_mm_al=2.0
-        )
-        env_2000 = RadiationEnvironment(
-            altitude_km=2000, inclination_deg=53.0, shielding_mm_al=2.0
-        )
+        env_500 = RadiationEnvironment(altitude_km=500, inclination_deg=53.0, shielding_mm_al=2.0)
+        env_2000 = RadiationEnvironment(altitude_km=2000, inclination_deg=53.0, shielding_mm_al=2.0)
         assert env_2000.base_seu_rate > env_500.base_seu_rate
 
     def test_saa_enhancement_for_mid_inclination(self) -> None:
         """SAA should enhance SEU rates for ISS-like inclinations vs polar."""
         # ISS-like (passes through SAA)
-        env_iss = RadiationEnvironment(
-            altitude_km=500, inclination_deg=51.6, shielding_mm_al=2.0
-        )
+        env_iss = RadiationEnvironment(altitude_km=500, inclination_deg=51.6, shielding_mm_al=2.0)
         # High inclination (less SAA exposure)
-        env_polar = RadiationEnvironment(
-            altitude_km=500, inclination_deg=10.0, shielding_mm_al=2.0
-        )
+        env_polar = RadiationEnvironment(altitude_km=500, inclination_deg=10.0, shielding_mm_al=2.0)
         assert env_iss.base_seu_rate > env_polar.base_seu_rate, (
             "SAA enhancement should make ISS-inclination SEU rate higher than "
             "equatorial orbit at same altitude"
@@ -228,19 +210,14 @@ class TestSEUPoissonStatistics:
         """Mean of N Poisson samples should converge to analytical lambda."""
         import numpy as np
 
-        env = RadiationEnvironment(
-            altitude_km=800, inclination_deg=53.0, shielding_mm_al=2.0
-        )
+        env = RadiationEnvironment(altitude_km=800, inclination_deg=53.0, shielding_mm_al=2.0)
         chip_xsec = 5e-13  # Trillium-like
         num_bits = 1_000_000
         dt = 3600.0  # 1 hour
 
         rng = np.random.default_rng(42)
         n_samples = 10_000
-        counts = [
-            env.sample_seu_events(chip_xsec, num_bits, dt, rng=rng)
-            for _ in range(n_samples)
-        ]
+        counts = [env.sample_seu_events(chip_xsec, num_bits, dt, rng=rng) for _ in range(n_samples)]
 
         sample_mean = sum(counts) / n_samples
 
@@ -267,40 +244,30 @@ class TestShieldingPhysics:
 
     def test_zero_shielding_gives_maximum_rates(self) -> None:
         """No shielding should give the highest radiation rates."""
-        env_0 = RadiationEnvironment(
-            altitude_km=800, inclination_deg=53.0, shielding_mm_al=0.0
-        )
-        env_2 = RadiationEnvironment(
-            altitude_km=800, inclination_deg=53.0, shielding_mm_al=2.0
-        )
+        env_0 = RadiationEnvironment(altitude_km=800, inclination_deg=53.0, shielding_mm_al=0.0)
+        env_2 = RadiationEnvironment(altitude_km=800, inclination_deg=53.0, shielding_mm_al=2.0)
         assert env_0.base_seu_rate > env_2.base_seu_rate
         assert env_0.tid_rate_krad_per_day > env_2.tid_rate_krad_per_day
 
     def test_heavy_shielding_significantly_reduces_tid(self) -> None:
         """10mm Al should reduce TID by at least 90% vs 0.5mm."""
-        env_light = RadiationEnvironment(
-            altitude_km=800, inclination_deg=53.0, shielding_mm_al=0.5
-        )
+        env_light = RadiationEnvironment(altitude_km=800, inclination_deg=53.0, shielding_mm_al=0.5)
         env_heavy = RadiationEnvironment(
             altitude_km=800, inclination_deg=53.0, shielding_mm_al=10.0
         )
         reduction = 1.0 - (env_heavy.tid_rate_krad_per_day / env_light.tid_rate_krad_per_day)
-        assert reduction > 0.9, (
-            f"10mm Al only reduced TID by {reduction:.0%}, expected >90%"
-        )
+        assert reduction > 0.9, f"10mm Al only reduced TID by {reduction:.0%}, expected >90%"
 
     def test_shielding_attenuation_is_monotonic(self) -> None:
         """More shielding must always reduce rates (no anomalous behavior)."""
         shields = [0.0, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0, 10.0, 15.0, 20.0]
         rates = []
         for s in shields:
-            env = RadiationEnvironment(
-                altitude_km=600, inclination_deg=53.0, shielding_mm_al=s
-            )
+            env = RadiationEnvironment(altitude_km=600, inclination_deg=53.0, shielding_mm_al=s)
             rates.append(env.tid_rate_krad_per_day)
 
         for i in range(1, len(rates)):
             assert rates[i] < rates[i - 1], (
                 f"TID rate not monotonically decreasing: "
-                f"{shields[i-1]}mm={rates[i-1]:.6f} vs {shields[i]}mm={rates[i]:.6f}"
+                f"{shields[i - 1]}mm={rates[i - 1]:.6f} vs {shields[i]}mm={rates[i]:.6f}"
             )

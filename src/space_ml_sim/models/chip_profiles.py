@@ -122,7 +122,7 @@ SAMRH71 = ChipProfile(
     compute_tops=0.0005,
     memory_bits=2 * 8 * 1024**2,  # 2 MB SRAM
     notes="Rad-hard MCU — 300 MHz Cortex-M7, ESA-qualified for JUICE mission, "
-          "SEL immune up to 62 MeV·cm²/mg",
+    "SEL immune up to 62 MeV·cm²/mg",
 )
 
 GR740 = ChipProfile(
@@ -135,7 +135,7 @@ GR740 = ChipProfile(
     compute_tops=0.002,
     memory_bits=4 * 8 * 1024**2,  # 4 MB on-chip
     notes="Rad-hard SPARC V8 quad-core — ESA's next-gen OBC processor, "
-          "EDAC on all memories, flying on PLATO and FLEX",
+    "EDAC on all memories, flying on PLATO and FLEX",
 )
 
 XQRKU060 = ChipProfile(
@@ -148,7 +148,7 @@ XQRKU060 = ChipProfile(
     compute_tops=1.5,
     memory_bits=8 * 8 * 1024**2,  # 8 MB BRAM
     notes="Space-grade FPGA — most widely used reconfigurable space processor, "
-          "built-in FRAME_ECC for scrubbing, qualified for 15-year missions",
+    "built-in FRAME_ECC for scrubbing, qualified for 15-year missions",
 )
 
 ALL_CHIPS: list[ChipProfile] = [

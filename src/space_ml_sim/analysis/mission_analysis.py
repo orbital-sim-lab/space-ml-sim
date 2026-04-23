@@ -143,7 +143,9 @@ def run_mission_analysis(
     # --- Risk Assessment ---
     risk_factors: dict[str, str] = {}
 
-    tid_margin = chip.tid_tolerance_krad / tid_over_mission if tid_over_mission > 0 else float("inf")
+    tid_margin = (
+        chip.tid_tolerance_krad / tid_over_mission if tid_over_mission > 0 else float("inf")
+    )
     if tid_margin < 1.5:
         risk_factors["TID"] = "HIGH"
     elif tid_margin < 3.0:
@@ -181,8 +183,12 @@ def run_mission_analysis(
         overall_risk = "LOW"
 
     # --- ECSS Report ---
-    compute_mult = {"none": 1.0, "full_tmr": 3.0, "selective_tmr": 1.5,
-                     "checkpoint_rollback": 1.0}.get(tmr_strategy, 1.0)
+    compute_mult = {
+        "none": 1.0,
+        "full_tmr": 3.0,
+        "selective_tmr": 1.5,
+        "checkpoint_rollback": 1.0,
+    }.get(tmr_strategy, 1.0)
 
     ecss_html = generate_ecss_report(
         mission_name=mission_name,

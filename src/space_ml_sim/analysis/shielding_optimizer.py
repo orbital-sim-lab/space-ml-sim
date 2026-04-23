@@ -110,12 +110,14 @@ def shielding_sweep(
             inclination_deg=orbit.inclination_deg,
             shielding_mm_al=shield,
         )
-        results.append(ShieldingResult(
-            shielding_mm_al=shield,
-            achieved_tid_krad=rad_env.tid_rate_krad_per_day * mission_days,
-            achieved_seu_rate=rad_env.base_seu_rate,
-            mass_penalty_kg_m2=_mass_per_area(shield),
-        ))
+        results.append(
+            ShieldingResult(
+                shielding_mm_al=shield,
+                achieved_tid_krad=rad_env.tid_rate_krad_per_day * mission_days,
+                achieved_seu_rate=rad_env.base_seu_rate,
+                mass_penalty_kg_m2=_mass_per_area(shield),
+            )
+        )
 
     return results
 

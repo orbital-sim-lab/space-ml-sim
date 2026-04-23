@@ -7,11 +7,8 @@ permanently damage the chip if not detected and power-cycled.
 
 from __future__ import annotations
 
-import pytest
-import numpy as np
 
 from space_ml_sim.environment.radiation import RadiationEnvironment
-from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E
 
 
 class TestSELRate:
@@ -32,8 +29,12 @@ class TestSELRate:
         from space_ml_sim.environment.sel_model import sel_rate_per_day
 
         rad_env = RadiationEnvironment.leo_500km()
-        r_low = sel_rate_per_day(rad_env=rad_env, sel_cross_section_cm2=1e-10, sel_threshold_let=20.0)
-        r_high = sel_rate_per_day(rad_env=rad_env, sel_cross_section_cm2=1e-7, sel_threshold_let=20.0)
+        r_low = sel_rate_per_day(
+            rad_env=rad_env, sel_cross_section_cm2=1e-10, sel_threshold_let=20.0
+        )
+        r_high = sel_rate_per_day(
+            rad_env=rad_env, sel_cross_section_cm2=1e-7, sel_threshold_let=20.0
+        )
         assert r_high > r_low
 
     def test_higher_threshold_lower_rate(self) -> None:
@@ -41,8 +42,12 @@ class TestSELRate:
         from space_ml_sim.environment.sel_model import sel_rate_per_day
 
         rad_env = RadiationEnvironment.leo_500km()
-        r_low_thresh = sel_rate_per_day(rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=10.0)
-        r_high_thresh = sel_rate_per_day(rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=60.0)
+        r_low_thresh = sel_rate_per_day(
+            rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=10.0
+        )
+        r_high_thresh = sel_rate_per_day(
+            rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=60.0
+        )
         assert r_high_thresh < r_low_thresh
 
     def test_rad_hard_immune(self) -> None:
@@ -51,7 +56,9 @@ class TestSELRate:
 
         rad_env = RadiationEnvironment.leo_500km()
         # LET threshold of 100 MeV·cm²/mg — above any practical particle
-        rate = sel_rate_per_day(rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=100.0)
+        rate = sel_rate_per_day(
+            rad_env=rad_env, sel_cross_section_cm2=1e-8, sel_threshold_let=100.0
+        )
         assert rate < 1e-10  # Effectively zero
 
 

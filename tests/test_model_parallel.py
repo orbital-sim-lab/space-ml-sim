@@ -16,7 +16,6 @@ Key behaviors:
 
 from __future__ import annotations
 
-import pytest
 import torch
 import torch.nn as nn
 
@@ -203,9 +202,7 @@ class TestPipelineExecutor:
 
         executor = PipelineExecutor(network=network)
         r2 = executor.execute(stages=stages_2, pipeline_nodes=["S0", "S1"], input_tensor=x)
-        r3 = executor.execute(
-            stages=stages_3, pipeline_nodes=["S0", "S1", "S2"], input_tensor=x
-        )
+        r3 = executor.execute(stages=stages_3, pipeline_nodes=["S0", "S1", "S2"], input_tensor=x)
 
         assert r3.communication_latency_ms > r2.communication_latency_ms
 

@@ -12,7 +12,6 @@ Federated learning across a constellation:
 
 from __future__ import annotations
 
-import pytest
 import torch
 import torch.nn as nn
 
@@ -42,9 +41,7 @@ class TestGradientCompression:
 
         # Compressed representation should have fewer non-zero values
         total_original = sum(g.numel() for g in grads.values())
-        total_compressed = sum(
-            (g != 0).sum().item() for g in compressed.values()
-        )
+        total_compressed = sum((g != 0).sum().item() for g in compressed.values())
         assert total_compressed < total_original
 
     def test_none_compression_preserves_all(self) -> None:

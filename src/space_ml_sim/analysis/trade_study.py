@@ -82,26 +82,28 @@ class TradeStudy:
             DataFrame with one row per configuration and all metrics as columns.
         """
         results = self.run()
-        return pd.DataFrame([
-            {
-                "name": r.name,
-                "altitude_km": r.altitude_km,
-                "inclination_deg": r.inclination_deg,
-                "chip_name": r.chip_name,
-                "tmr_strategy": r.tmr_strategy,
-                "shielding_mm_al": r.shielding_mm_al,
-                "mission_years": r.mission_years,
-                "seu_rate_per_day": r.seu_rate_per_day,
-                "expected_seus_per_orbit": r.expected_seus_per_orbit,
-                "tid_over_mission_krad": r.tid_over_mission_krad,
-                "compute_multiplier": r.compute_multiplier,
-                "power_watts": r.power_watts,
-                "compute_tops": r.compute_tops,
-                "tid_tolerance_krad": r.tid_tolerance_krad,
-                "risk_level": r.risk_level,
-            }
-            for r in results
-        ])
+        return pd.DataFrame(
+            [
+                {
+                    "name": r.name,
+                    "altitude_km": r.altitude_km,
+                    "inclination_deg": r.inclination_deg,
+                    "chip_name": r.chip_name,
+                    "tmr_strategy": r.tmr_strategy,
+                    "shielding_mm_al": r.shielding_mm_al,
+                    "mission_years": r.mission_years,
+                    "seu_rate_per_day": r.seu_rate_per_day,
+                    "expected_seus_per_orbit": r.expected_seus_per_orbit,
+                    "tid_over_mission_krad": r.tid_over_mission_krad,
+                    "compute_multiplier": r.compute_multiplier,
+                    "power_watts": r.power_watts,
+                    "compute_tops": r.compute_tops,
+                    "tid_tolerance_krad": r.tid_tolerance_krad,
+                    "risk_level": r.risk_level,
+                }
+                for r in results
+            ]
+        )
 
 
 def _evaluate_config(config: MissionConfig) -> TradeStudyResult:

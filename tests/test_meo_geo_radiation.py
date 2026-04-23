@@ -10,7 +10,6 @@ Van Allen belts create a complex radiation profile:
 
 from __future__ import annotations
 
-import pytest
 
 from space_ml_sim.environment.radiation import RadiationEnvironment
 

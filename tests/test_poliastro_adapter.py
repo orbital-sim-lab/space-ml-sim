@@ -21,9 +21,7 @@ try:
 except ImportError:
     HAS_POLIASTRO = False
 
-skip_no_poliastro = pytest.mark.skipif(
-    not HAS_POLIASTRO, reason="poliastro not installed"
-)
+skip_no_poliastro = pytest.mark.skipif(not HAS_POLIASTRO, reason="poliastro not installed")
 
 
 class TestFromPoliastroImport:

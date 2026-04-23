@@ -45,7 +45,11 @@ def generate_milstd_report(
         Complete HTML report string.
     """
     error_rate = num_errors_observed / fluence_ions_cm2 if fluence_ions_cm2 > 0 else 0
-    cross_section_per_bit = num_errors_observed / (fluence_ions_cm2 * bits_under_test) if (fluence_ions_cm2 > 0 and bits_under_test > 0) else 0
+    cross_section_per_bit = (
+        num_errors_observed / (fluence_ions_cm2 * bits_under_test)
+        if (fluence_ions_cm2 > 0 and bits_under_test > 0)
+        else 0
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="en">

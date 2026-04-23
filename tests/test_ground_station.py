@@ -11,9 +11,6 @@ Ground station features:
 
 from __future__ import annotations
 
-import math
-
-import pytest
 
 from space_ml_sim.core.orbit import OrbitConfig, R_EARTH_KM
 

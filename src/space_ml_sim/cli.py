@@ -39,6 +39,7 @@ def _resolve_chip(name: str):
             return chip
     # Try exact match on constant names
     import space_ml_sim.models.chip_profiles as cp
+
     obj = getattr(cp, name.upper(), None)
     if obj is not None:
         return obj
@@ -97,10 +98,14 @@ def chips(name: str | None):
 @cli.command("trade-study")
 @click.option("--orbit", required=True, help="Orbit as 'altitude_km/inclination_deg' (e.g. 550/53)")
 @click.option("--chip", "chip_names", multiple=True, required=True, help="Chip name(s)")
-@click.option("--tmr", default="none", help="TMR strategy: none, full_tmr, selective_tmr, checkpoint_rollback")
+@click.option(
+    "--tmr", default="none", help="TMR strategy: none, full_tmr, selective_tmr, checkpoint_rollback"
+)
 @click.option("--shielding", default=2.0, type=float, help="Shielding in mm Al (default: 2.0)")
 @click.option("--mission-years", default=5.0, type=float, help="Mission duration in years")
-def trade_study(orbit: str, chip_names: tuple[str, ...], tmr: str, shielding: float, mission_years: float):
+def trade_study(
+    orbit: str, chip_names: tuple[str, ...], tmr: str, shielding: float, mission_years: float
+):
     """Run a mission trade study comparing configurations."""
     from space_ml_sim.analysis.trade_study import TradeStudy, MissionConfig
 
@@ -108,14 +113,16 @@ def trade_study(orbit: str, chip_names: tuple[str, ...], tmr: str, shielding: fl
     configs = []
     for name in chip_names:
         chip = _resolve_chip(name)
-        configs.append(MissionConfig(
-            name=chip.name,
-            orbit=orbit_config,
-            chip=chip,
-            tmr_strategy=tmr,
-            shielding_mm_al=shielding,
-            mission_years=mission_years,
-        ))
+        configs.append(
+            MissionConfig(
+                name=chip.name,
+                orbit=orbit_config,
+                chip=chip,
+                tmr_strategy=tmr,
+                shielding_mm_al=shielding,
+                mission_years=mission_years,
+            )
+        )
 
     study = TradeStudy(configs=configs)
     results = study.run()
@@ -151,8 +158,15 @@ def trade_study(orbit: str, chip_names: tuple[str, ...], tmr: str, shielding: fl
 @click.option("--shielding", default=3.0, type=float)
 @click.option("--tmr", default="selective_tmr")
 @click.option("--output", required=True, help="Output HTML file path")
-def report(report_type: str, orbit: str, chip_name: str, mission_years: float,
-           shielding: float, tmr: str, output: str):
+def report(
+    report_type: str,
+    orbit: str,
+    chip_name: str,
+    mission_years: float,
+    shielding: float,
+    tmr: str,
+    output: str,
+):
     """Generate a compliance report (ECSS or MIL-STD)."""
     import math
 
@@ -191,7 +205,12 @@ def report(report_type: str, orbit: str, chip_name: str, mission_years: float,
             expected_seus_per_orbit=seus_per_orbit,
             tmr_strategy=tmr,
             protected_layers=[],
-            compute_multiplier={"none": 1.0, "full_tmr": 3.0, "selective_tmr": 1.5, "checkpoint_rollback": 1.0}.get(tmr, 1.0),
+            compute_multiplier={
+                "none": 1.0,
+                "full_tmr": 3.0,
+                "selective_tmr": 1.5,
+                "checkpoint_rollback": 1.0,
+            }.get(tmr, 1.0),
             expected_accuracy_recovery=0.0,
             shielding_mm_al=shielding,
         )
@@ -227,13 +246,18 @@ def report(report_type: str, orbit: str, chip_name: str, mission_years: float,
 @click.option("--rx-gain", default=30.0, type=float, help="Rx antenna gain in dBi")
 @click.option("--noise-temp", default=300.0, type=float, help="System noise temp in K")
 @click.option("--bandwidth", default=2e6, type=float, help="Bandwidth in Hz")
-def link_budget(orbit: str, freq: str, tx_power: float, tx_gain: float,
-                rx_gain: float, noise_temp: float, bandwidth: float):
+def link_budget(
+    orbit: str,
+    freq: str,
+    tx_power: float,
+    tx_gain: float,
+    rx_gain: float,
+    noise_temp: float,
+    bandwidth: float,
+):
     """Compute satellite downlink budget."""
     import math
-    from space_ml_sim.comms.link_budget import (
-        compute_link_budget, FREQUENCY_BANDS, free_space_path_loss_db
-    )
+    from space_ml_sim.comms.link_budget import compute_link_budget, FREQUENCY_BANDS
 
     orbit_config = _parse_orbit(orbit)
     band = FREQUENCY_BANDS.get(freq)
@@ -265,9 +289,11 @@ def link_budget(orbit: str, freq: str, tx_power: float, tx_gain: float,
     table.add_row("C/N", f"{result.cn_db:.1f} dB")
     table.add_row("Eb/No", f"{result.eb_no_db:.1f} dB")
 
-    margin_style = "green" if result.link_margin_db > 3 else ("yellow" if result.link_margin_db > 0 else "red")
+    margin_style = (
+        "green" if result.link_margin_db > 3 else ("yellow" if result.link_margin_db > 0 else "red")
+    )
     table.add_row("Link Margin", f"[{margin_style}]{result.link_margin_db:.1f} dB[/]")
-    table.add_row("Max Data Rate", f"{result.max_data_rate_bps/1e6:.1f} Mbps")
+    table.add_row("Max Data Rate", f"{result.max_data_rate_bps / 1e6:.1f} Mbps")
     console.print(table)
 
 
@@ -287,9 +313,13 @@ def constellations():
 
     for key, preset in CONSTELLATION_PRESETS.items():
         table.add_row(
-            key, preset.name, preset.operator,
-            str(preset.num_satellites), str(preset.num_planes),
-            str(preset.altitude_km), str(preset.inclination_deg),
+            key,
+            preset.name,
+            preset.operator,
+            str(preset.num_satellites),
+            str(preset.num_planes),
+            str(preset.altitude_km),
+            str(preset.inclination_deg),
         )
     console.print(table)
 
@@ -302,8 +332,15 @@ def constellations():
 @click.option("--tmr", default="none")
 @click.option("--solar", default=None, help="Solar cycle phase: solar_min, solar_max, average")
 @click.option("--output", default=None, help="Save ECSS report to HTML file")
-def analyze(orbit: str, chip_name: str, mission_years: float, shielding: float,
-            tmr: str, solar: str | None, output: str | None):
+def analyze(
+    orbit: str,
+    chip_name: str,
+    mission_years: float,
+    shielding: float,
+    tmr: str,
+    solar: str | None,
+    output: str | None,
+):
     """Run full mission analysis (radiation + thermal + link + risk)."""
     from space_ml_sim.analysis.mission_analysis import run_mission_analysis
 
@@ -329,24 +366,36 @@ def analyze(orbit: str, chip_name: str, mission_years: float, shielding: float,
     # Radiation
     risk_style = {"LOW": "green", "MEDIUM": "yellow", "HIGH": "red"}
     rad_risk = result.risk_factors.get("SEU", "LOW")
-    table.add_row("Radiation", "SEU/day", f"{result.seu_rate_per_day:.2e}",
-                  f"[{risk_style[rad_risk]}]{rad_risk}[/]")
+    table.add_row(
+        "Radiation",
+        "SEU/day",
+        f"{result.seu_rate_per_day:.2e}",
+        f"[{risk_style[rad_risk]}]{rad_risk}[/]",
+    )
     table.add_row("", "SEU/orbit", f"{result.expected_seus_per_orbit:.2f}", "")
     tid_risk = result.risk_factors.get("TID", "LOW")
-    table.add_row("", "TID (mission)", f"{result.tid_over_mission_krad:.1f} krad",
-                  f"[{risk_style[tid_risk]}]{tid_risk}[/]")
+    table.add_row(
+        "",
+        "TID (mission)",
+        f"{result.tid_over_mission_krad:.1f} krad",
+        f"[{risk_style[tid_risk]}]{tid_risk}[/]",
+    )
 
     # Thermal
     thermal_risk = result.risk_factors.get("THERMAL", "LOW")
-    table.add_row("Thermal", "Min temp", f"{result.min_temperature_c:.0f} °C",
-                  f"[{risk_style[thermal_risk]}]{thermal_risk}[/]")
+    table.add_row(
+        "Thermal",
+        "Min temp",
+        f"{result.min_temperature_c:.0f} °C",
+        f"[{risk_style[thermal_risk]}]{thermal_risk}[/]",
+    )
     table.add_row("", "Max temp", f"{result.max_temperature_c:.0f} °C", "")
     table.add_row("", "Cycles/orbit", f"{result.thermal_cycles_per_orbit}", "")
 
     # Link
     link_risk = result.risk_factors.get("LINK", "LOW")
     margin_str = f"{result.downlink_margin_db:.1f} dB" if result.downlink_margin_db else "N/A"
-    rate_str = f"{result.max_data_rate_bps/1e6:.1f} Mbps" if result.max_data_rate_bps else "N/A"
+    rate_str = f"{result.max_data_rate_bps / 1e6:.1f} Mbps" if result.max_data_rate_bps else "N/A"
     table.add_row("Link", "Margin", margin_str, f"[{risk_style[link_risk]}]{link_risk}[/]")
     table.add_row("", "Max rate", rate_str, "")
 

@@ -15,8 +15,6 @@ from __future__ import annotations
 
 import math
 
-import pytest
-
 
 # ---------------------------------------------------------------------------
 # Test: ISLNetwork construction and topology
@@ -117,9 +115,7 @@ class TestTransferTime:
             "S0": (6771.0, 0.0, 0.0),
             "S1": (6771.0, 50.0, 0.0),
         }
-        net = ISLNetwork.from_positions(
-            positions, max_range_km=5000.0, bandwidth_gbps=10.0
-        )
+        net = ISLNetwork.from_positions(positions, max_range_km=5000.0, bandwidth_gbps=10.0)
         t_small = net.transfer_time_ms("S0", "S1", payload_bytes=1_000_000)
         t_large = net.transfer_time_ms("S0", "S1", payload_bytes=100_000_000)
         assert t_large > t_small
@@ -131,9 +127,7 @@ class TestTransferTime:
             "S0": (6771.0, 0.0, 0.0),
             "S1": (6771.0, 50.0, 0.0),
         }
-        net = ISLNetwork.from_positions(
-            positions, max_range_km=5000.0, bandwidth_gbps=10.0
-        )
+        net = ISLNetwork.from_positions(positions, max_range_km=5000.0, bandwidth_gbps=10.0)
         latency = net.link_latency_ms("S0", "S1")
         transfer = net.transfer_time_ms("S0", "S1", payload_bytes=1)
         # Transfer time must be at least the propagation latency
@@ -228,10 +222,12 @@ class TestNetworkUpdate:
             "S1": (6771.0, 50.0, 0.0),
         }
         net1 = ISLNetwork.from_positions(positions, max_range_km=5000.0)
-        net2 = net1.with_updated_positions({
-            "S0": (6771.0, 0.0, 0.0),
-            "S1": (-6771.0, 0.0, 0.0),
-        })
+        net2 = net1.with_updated_positions(
+            {
+                "S0": (6771.0, 0.0, 0.0),
+                "S1": (-6771.0, 0.0, 0.0),
+            }
+        )
         # Original unchanged
         assert net1.has_link("S0", "S1")
         assert not net2.has_link("S0", "S1")

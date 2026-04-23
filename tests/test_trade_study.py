@@ -7,7 +7,6 @@ Enables side-by-side comparison of multiple mission configurations:
 
 from __future__ import annotations
 
-import pytest
 import torch.nn as nn
 
 from space_ml_sim.core.orbit import OrbitConfig
@@ -16,7 +15,8 @@ from space_ml_sim.models.chip_profiles import RAD5500, TRILLIUM_V6E, XQRKU060
 
 def _model_factory():
     return nn.Sequential(
-        nn.Linear(20, 64), nn.ReLU(),
+        nn.Linear(20, 64),
+        nn.ReLU(),
         nn.Linear(64, 10),
     )
 
@@ -30,7 +30,9 @@ class TestTradeStudyConfig:
         configs = [
             MissionConfig(
                 name="Option A",
-                orbit=OrbitConfig(altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0),
+                orbit=OrbitConfig(
+                    altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+                ),
                 chip=RAD5500,
                 tmr_strategy="full_tmr",
                 shielding_mm_al=3.0,
@@ -38,7 +40,9 @@ class TestTradeStudyConfig:
             ),
             MissionConfig(
                 name="Option B",
-                orbit=OrbitConfig(altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0),
+                orbit=OrbitConfig(
+                    altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+                ),
                 chip=TRILLIUM_V6E,
                 tmr_strategy="selective_tmr",
                 shielding_mm_al=5.0,
@@ -54,7 +58,9 @@ class TestTradeStudyConfig:
         configs = [
             MissionConfig(
                 name="Baseline",
-                orbit=OrbitConfig(altitude_km=550, inclination_deg=97.6, raan_deg=0, true_anomaly_deg=0),
+                orbit=OrbitConfig(
+                    altitude_km=550, inclination_deg=97.6, raan_deg=0, true_anomaly_deg=0
+                ),
                 chip=RAD5500,
                 tmr_strategy="none",
                 shielding_mm_al=2.0,
@@ -75,7 +81,9 @@ class TestTradeStudyResults:
         configs = [
             MissionConfig(
                 name="Test",
-                orbit=OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0),
+                orbit=OrbitConfig(
+                    altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+                ),
                 chip=TRILLIUM_V6E,
                 tmr_strategy="full_tmr",
                 shielding_mm_al=3.0,
@@ -96,7 +104,9 @@ class TestTradeStudyResults:
         configs = [
             MissionConfig(
                 name="Full TMR",
-                orbit=OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0),
+                orbit=OrbitConfig(
+                    altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+                ),
                 chip=RAD5500,
                 tmr_strategy="full_tmr",
                 shielding_mm_al=2.0,
@@ -115,12 +125,30 @@ class TestTradeStudyResults:
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
         configs = [
-            MissionConfig(name="Rad-hard", orbit=orbit, chip=RAD5500,
-                          tmr_strategy="none", shielding_mm_al=2.0, mission_years=5.0),
-            MissionConfig(name="COTS+TMR", orbit=orbit, chip=TRILLIUM_V6E,
-                          tmr_strategy="full_tmr", shielding_mm_al=5.0, mission_years=5.0),
-            MissionConfig(name="FPGA", orbit=orbit, chip=XQRKU060,
-                          tmr_strategy="selective_tmr", shielding_mm_al=3.0, mission_years=5.0),
+            MissionConfig(
+                name="Rad-hard",
+                orbit=orbit,
+                chip=RAD5500,
+                tmr_strategy="none",
+                shielding_mm_al=2.0,
+                mission_years=5.0,
+            ),
+            MissionConfig(
+                name="COTS+TMR",
+                orbit=orbit,
+                chip=TRILLIUM_V6E,
+                tmr_strategy="full_tmr",
+                shielding_mm_al=5.0,
+                mission_years=5.0,
+            ),
+            MissionConfig(
+                name="FPGA",
+                orbit=orbit,
+                chip=XQRKU060,
+                tmr_strategy="selective_tmr",
+                shielding_mm_al=3.0,
+                mission_years=5.0,
+            ),
         ]
         study = TradeStudy(configs=configs)
         results = study.run()
@@ -134,10 +162,22 @@ class TestTradeStudyResults:
 
         orbit = OrbitConfig(altitude_km=550, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
         configs = [
-            MissionConfig(name="A", orbit=orbit, chip=RAD5500,
-                          tmr_strategy="none", shielding_mm_al=2.0, mission_years=5.0),
-            MissionConfig(name="B", orbit=orbit, chip=TRILLIUM_V6E,
-                          tmr_strategy="full_tmr", shielding_mm_al=3.0, mission_years=5.0),
+            MissionConfig(
+                name="A",
+                orbit=orbit,
+                chip=RAD5500,
+                tmr_strategy="none",
+                shielding_mm_al=2.0,
+                mission_years=5.0,
+            ),
+            MissionConfig(
+                name="B",
+                orbit=orbit,
+                chip=TRILLIUM_V6E,
+                tmr_strategy="full_tmr",
+                shielding_mm_al=3.0,
+                mission_years=5.0,
+            ),
         ]
         study = TradeStudy(configs=configs)
         df = study.to_dataframe()

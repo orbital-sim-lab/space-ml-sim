@@ -11,7 +11,6 @@ The ECSS report generator:
 
 from __future__ import annotations
 
-import pytest
 
 from space_ml_sim.core.orbit import OrbitConfig
 

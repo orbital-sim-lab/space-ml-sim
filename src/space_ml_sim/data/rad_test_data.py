@@ -10,7 +10,6 @@ Expected CSV columns:
 from __future__ import annotations
 
 import csv
-import io
 from dataclasses import dataclass
 from typing import TextIO
 
@@ -52,15 +51,17 @@ def load_rad_test_csv(source: TextIO) -> list[RadTestRecord]:
         else:
             xsec = 0.0
 
-        records.append(RadTestRecord(
-            ion=row["ion"].strip(),
-            energy_mev=float(row["energy_mev"]),
-            let_mev_cm2_mg=float(row["let_mev_cm2_mg"]),
-            fluence_ions_cm2=fluence,
-            errors=errors,
-            bits_under_test=bits,
-            cross_section_cm2_per_bit=xsec,
-        ))
+        records.append(
+            RadTestRecord(
+                ion=row["ion"].strip(),
+                energy_mev=float(row["energy_mev"]),
+                let_mev_cm2_mg=float(row["let_mev_cm2_mg"]),
+                fluence_ions_cm2=fluence,
+                errors=errors,
+                bits_under_test=bits,
+                cross_section_cm2_per_bit=xsec,
+            )
+        )
 
     return records
 
@@ -74,18 +75,20 @@ def to_dataframe(records: list[RadTestRecord]) -> pd.DataFrame:
     Returns:
         DataFrame with all fields as columns.
     """
-    return pd.DataFrame([
-        {
-            "ion": r.ion,
-            "energy_mev": r.energy_mev,
-            "let_mev_cm2_mg": r.let_mev_cm2_mg,
-            "fluence_ions_cm2": r.fluence_ions_cm2,
-            "errors": r.errors,
-            "bits_under_test": r.bits_under_test,
-            "cross_section_cm2_per_bit": r.cross_section_cm2_per_bit,
-        }
-        for r in records
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "ion": r.ion,
+                "energy_mev": r.energy_mev,
+                "let_mev_cm2_mg": r.let_mev_cm2_mg,
+                "fluence_ions_cm2": r.fluence_ions_cm2,
+                "errors": r.errors,
+                "bits_under_test": r.bits_under_test,
+                "cross_section_cm2_per_bit": r.cross_section_cm2_per_bit,
+            }
+            for r in records
+        ]
+    )
 
 
 def cross_section_curve(

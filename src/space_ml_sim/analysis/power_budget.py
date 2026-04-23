@@ -113,22 +113,27 @@ class PowerBudget:
         # Battery energy needed for eclipse
         eclipse_sec = eclipse_min * 60
         battery_needed_wh = load_eclipse * (eclipse_sec / 3600)
-        usable_battery_wh = self.battery.capacity_wh * self.battery.dod_limit * self.battery.round_trip_efficiency
-        battery_dod = battery_needed_wh / self.battery.capacity_wh if self.battery.capacity_wh > 0 else 1.0
+        usable_battery_wh = (
+            self.battery.capacity_wh * self.battery.dod_limit * self.battery.round_trip_efficiency
+        )
+        battery_dod = (
+            battery_needed_wh / self.battery.capacity_wh if self.battery.capacity_wh > 0 else 1.0
+        )
 
         # Eclipse compute duty cycle (how much of eclipse can run compute)
         base_eclipse_wh = self.base_load_w * (eclipse_sec / 3600)
         available_for_compute_wh = max(0, usable_battery_wh - base_eclipse_wh)
         compute_eclipse_wh = self.compute_load_w * (eclipse_sec / 3600)
-        eclipse_duty = min(1.0, available_for_compute_wh / compute_eclipse_wh) if compute_eclipse_wh > 0 else 1.0
+        eclipse_duty = (
+            min(1.0, available_for_compute_wh / compute_eclipse_wh)
+            if compute_eclipse_wh > 0
+            else 1.0
+        )
 
         # Orbit-average power balance
         sunlit_sec = sunlit_min * 60
         energy_generated_wh = solar_w * (sunlit_sec / 3600)
-        energy_consumed_wh = (
-            load_sunlit * (sunlit_sec / 3600)
-            + load_eclipse * (eclipse_sec / 3600)
-        )
+        energy_consumed_wh = load_sunlit * (sunlit_sec / 3600) + load_eclipse * (eclipse_sec / 3600)
         orbit_avg_power = (energy_generated_wh - energy_consumed_wh) / (period_sec / 3600)
 
         # Margin: surplus power averaged over orbit

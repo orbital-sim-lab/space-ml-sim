@@ -6,8 +6,6 @@ MIL-STD-883 Test Method 1019 (Ionizing Dose Total Dose Test Procedure).
 
 from __future__ import annotations
 
-import pytest
-
 
 MOCK_TEST_DATA = {
     "device_name": "TRILLIUM_V6E",

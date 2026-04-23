@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 
 class TestConstellationPresets:
     """Pre-built constellation configurations for popular constellations."""

@@ -11,9 +11,7 @@ rate estimates, accounting for:
 
 from __future__ import annotations
 
-import pytest
 
-from space_ml_sim.core.orbit import OrbitConfig
 from space_ml_sim.environment.radiation import RadiationEnvironment
 
 
@@ -100,9 +98,7 @@ class TestMissionUncertainty:
         )
 
         rad_env = RadiationEnvironment.leo_500km()
-        result = mission_seus_with_uncertainty(
-            rad_env, mission_years=5.0, total_bits=10_000_000
-        )
+        result = mission_seus_with_uncertainty(rad_env, mission_years=5.0, total_bits=10_000_000)
 
         assert result.nominal >= 0
         assert result.lower_bound <= result.nominal

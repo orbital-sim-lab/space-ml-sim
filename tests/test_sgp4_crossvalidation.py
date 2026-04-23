@@ -14,7 +14,6 @@ from SGP4. We validate:
 from __future__ import annotations
 
 import math
-import pytest
 
 from space_ml_sim.core.orbit import position_at, R_EARTH_KM
 from space_ml_sim.core.tle import parse_tle, propagate_sgp4
@@ -108,7 +107,7 @@ class TestKeplerianReturn:
         pos_end = position_at(orbit, time_seconds=orbit.orbital_period_seconds)
 
         # After one orbit, J2 shifts RAAN slightly, so not exact return
-        dist = math.sqrt(sum((a - b)**2 for a, b in zip(pos_start, pos_end)))
+        dist = math.sqrt(sum((a - b) ** 2 for a, b in zip(pos_start, pos_end)))
         # Should be within ~100 km (J2 RAAN drift ~0.005 deg/orbit)
         assert dist < 150, f"Return distance: {dist:.1f} km"
 

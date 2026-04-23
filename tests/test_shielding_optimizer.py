@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from space_ml_sim.core.orbit import OrbitConfig
 
@@ -27,7 +26,9 @@ class TestShieldingOptimizer:
         from space_ml_sim.analysis.shielding_optimizer import find_minimum_shielding
 
         orbit_low = OrbitConfig(altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
-        orbit_high = OrbitConfig(altitude_km=1500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
+        orbit_high = OrbitConfig(
+            altitude_km=1500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+        )
 
         r_low = find_minimum_shielding(orbit=orbit_low, max_tid_krad=10.0, mission_years=5.0)
         r_high = find_minimum_shielding(orbit=orbit_high, max_tid_krad=10.0, mission_years=5.0)

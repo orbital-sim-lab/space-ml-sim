@@ -6,7 +6,6 @@ deliverable in every radiation analysis report.
 
 from __future__ import annotations
 
-import pytest
 
 from space_ml_sim.core.orbit import OrbitConfig
 
@@ -35,15 +34,17 @@ class TestDoseDepthCurve:
 
         for i in range(len(curve.dose_krad) - 1):
             assert curve.dose_krad[i + 1] <= curve.dose_krad[i], (
-                f"Dose should decrease: {curve.dose_krad[i]} -> {curve.dose_krad[i+1]} "
-                f"at {curve.shielding_mm[i+1]}mm"
+                f"Dose should decrease: {curve.dose_krad[i]} -> {curve.dose_krad[i + 1]} "
+                f"at {curve.shielding_mm[i + 1]}mm"
             )
 
     def test_higher_altitude_more_dose(self) -> None:
         from space_ml_sim.environment.dose_depth import generate_dose_depth_curve
 
         orbit_low = OrbitConfig(altitude_km=500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
-        orbit_high = OrbitConfig(altitude_km=1500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0)
+        orbit_high = OrbitConfig(
+            altitude_km=1500, inclination_deg=53, raan_deg=0, true_anomaly_deg=0
+        )
 
         c_low = generate_dose_depth_curve(orbit=orbit_low, mission_years=5.0, num_points=3)
         c_high = generate_dose_depth_curve(orbit=orbit_high, mission_years=5.0, num_points=3)

@@ -121,46 +121,64 @@ def auto_generate_rtm(
     entries: list[RequirementEvidence] = []
 
     # TID requirement
-    tid_margin = max_tid_krad / r.tid_over_mission_krad if r.tid_over_mission_krad > 0 else float("inf")
-    entries.append(RequirementEvidence(
-        req_id="RAD-001",
-        requirement=f"Mission TID shall not exceed {max_tid_krad} krad(Si)",
-        standard="ECSS-Q-ST-60-15C",
-        analysis_result=f"{r.tid_over_mission_krad:.1f} krad over {r.mission_years} years",
-        status="PASS" if r.tid_over_mission_krad <= max_tid_krad else "FAIL",
-        margin=f"{tid_margin:.1f}x",
-    ))
+    tid_margin = (
+        max_tid_krad / r.tid_over_mission_krad if r.tid_over_mission_krad > 0 else float("inf")
+    )
+    entries.append(
+        RequirementEvidence(
+            req_id="RAD-001",
+            requirement=f"Mission TID shall not exceed {max_tid_krad} krad(Si)",
+            standard="ECSS-Q-ST-60-15C",
+            analysis_result=f"{r.tid_over_mission_krad:.1f} krad over {r.mission_years} years",
+            status="PASS" if r.tid_over_mission_krad <= max_tid_krad else "FAIL",
+            margin=f"{tid_margin:.1f}x",
+        )
+    )
 
     # SEU requirement
-    seu_margin = max_seus_per_orbit / r.expected_seus_per_orbit if r.expected_seus_per_orbit > 0 else float("inf")
-    entries.append(RequirementEvidence(
-        req_id="RAD-002",
-        requirement=f"SEU rate shall not exceed {max_seus_per_orbit} upsets/orbit",
-        standard="ECSS-Q-ST-60-15C",
-        analysis_result=f"{r.expected_seus_per_orbit:.2f} SEU/orbit",
-        status="PASS" if r.expected_seus_per_orbit <= max_seus_per_orbit else "FAIL",
-        margin=f"{seu_margin:.1f}x",
-    ))
+    seu_margin = (
+        max_seus_per_orbit / r.expected_seus_per_orbit
+        if r.expected_seus_per_orbit > 0
+        else float("inf")
+    )
+    entries.append(
+        RequirementEvidence(
+            req_id="RAD-002",
+            requirement=f"SEU rate shall not exceed {max_seus_per_orbit} upsets/orbit",
+            standard="ECSS-Q-ST-60-15C",
+            analysis_result=f"{r.expected_seus_per_orbit:.2f} SEU/orbit",
+            status="PASS" if r.expected_seus_per_orbit <= max_seus_per_orbit else "FAIL",
+            margin=f"{seu_margin:.1f}x",
+        )
+    )
 
     # TID tolerance margin
-    chip_margin = r.tid_tolerance_krad / r.tid_over_mission_krad if r.tid_over_mission_krad > 0 else float("inf")
-    entries.append(RequirementEvidence(
-        req_id="RAD-003",
-        requirement="Component TID tolerance shall exceed 2x mission TID",
-        standard="MIL-STD-883 TM 1019",
-        analysis_result=f"Chip tolerance: {r.tid_tolerance_krad} krad, mission: {r.tid_over_mission_krad:.1f} krad",
-        status="PASS" if chip_margin >= 2.0 else "FAIL",
-        margin=f"{chip_margin:.1f}x",
-    ))
+    chip_margin = (
+        r.tid_tolerance_krad / r.tid_over_mission_krad
+        if r.tid_over_mission_krad > 0
+        else float("inf")
+    )
+    entries.append(
+        RequirementEvidence(
+            req_id="RAD-003",
+            requirement="Component TID tolerance shall exceed 2x mission TID",
+            standard="MIL-STD-883 TM 1019",
+            analysis_result=f"Chip tolerance: {r.tid_tolerance_krad} krad, mission: {r.tid_over_mission_krad:.1f} krad",
+            status="PASS" if chip_margin >= 2.0 else "FAIL",
+            margin=f"{chip_margin:.1f}x",
+        )
+    )
 
     # Compute power
-    entries.append(RequirementEvidence(
-        req_id="PWR-001",
-        requirement="Inference compute power shall be documented",
-        standard="ECSS-E-ST-20C",
-        analysis_result=f"{r.power_watts:.0f} W ({r.tmr_strategy}, {r.compute_multiplier}x overhead)",
-        status="PASS",
-        margin="N/A",
-    ))
+    entries.append(
+        RequirementEvidence(
+            req_id="PWR-001",
+            requirement="Inference compute power shall be documented",
+            standard="ECSS-E-ST-20C",
+            analysis_result=f"{r.power_watts:.0f} W ({r.tmr_strategy}, {r.compute_multiplier}x overhead)",
+            status="PASS",
+            margin="N/A",
+        )
+    )
 
     return generate_rtm(mission_name=mission_name, entries=entries)

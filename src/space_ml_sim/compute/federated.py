@@ -8,7 +8,6 @@ that produces a new global model.
 
 from __future__ import annotations
 
-import copy
 from dataclasses import dataclass
 
 import torch
@@ -173,8 +172,7 @@ class FederatedCoordinator:
 
             # Calculate transfer size (non-zero elements only for compressed)
             transfer_bytes = sum(
-                int((t != 0).sum().item()) * t.element_size()
-                for t in compressed.values()
+                int((t != 0).sum().item()) * t.element_size() for t in compressed.values()
             )
             total_bytes += transfer_bytes
 
@@ -182,9 +180,7 @@ class FederatedCoordinator:
             path = self.network.shortest_path(worker_id, self.aggregator_node)
             if path is not None and len(path) > 1:
                 for i in range(len(path) - 1):
-                    comm_ms += self.network.transfer_time_ms(
-                        path[i], path[i + 1], transfer_bytes
-                    )
+                    comm_ms += self.network.transfer_time_ms(path[i], path[i + 1], transfer_bytes)
 
             worker_states.append(compressed)
 

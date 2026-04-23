@@ -98,34 +98,31 @@ def recommend_tmr(
     protected_fraction = protected_params / total_params if total_params > 0 else 0.0
     compute_multiplier = 1.0 + 2.0 * protected_fraction
 
-    expected_recovery = sum(
-        sensitivity.get(name, 0.0) for name in protected
-    )
+    expected_recovery = sum(sensitivity.get(name, 0.0) for name in protected)
 
     unprotected_vulnerable = {
-        name for name, drop in sensitivity.items()
+        name
+        for name, drop in sensitivity.items()
         if name not in protected and drop >= min_vulnerability_threshold and name in param_sizes
     }
-    residual_risk = sum(
-        sensitivity.get(name, 0.0) for name in unprotected_vulnerable
-    )
+    residual_risk = sum(sensitivity.get(name, 0.0) for name in unprotected_vulnerable)
 
     cost_benefit_ratio = (
-        expected_recovery / (compute_multiplier - 1.0)
-        if compute_multiplier > 1.0
-        else 0.0
+        expected_recovery / (compute_multiplier - 1.0) if compute_multiplier > 1.0 else 0.0
     )
 
     # Build layer details
     details = []
     for name, drop in ranked:
-        details.append(LayerDetail(
-            name=name,
-            vulnerability=drop,
-            param_count=param_sizes.get(name, 0),
-            param_fraction=param_sizes.get(name, 0) / total_params if total_params > 0 else 0.0,
-            protected=name in protected,
-        ))
+        details.append(
+            LayerDetail(
+                name=name,
+                vulnerability=drop,
+                param_count=param_sizes.get(name, 0),
+                param_fraction=param_sizes.get(name, 0) / total_params if total_params > 0 else 0.0,
+                protected=name in protected,
+            )
+        )
 
     return TMRRecommendation(
         protected_layers=frozenset(protected),

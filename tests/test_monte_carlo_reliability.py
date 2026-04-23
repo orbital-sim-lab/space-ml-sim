@@ -14,8 +14,6 @@ SEU events and TID accumulation at each time step, to produce:
 from __future__ import annotations
 
 
-
-
 # ---------------------------------------------------------------------------
 # Tests for the Monte Carlo estimator
 # ---------------------------------------------------------------------------
@@ -190,7 +188,10 @@ class TestConfidenceIntervals:
         )
         # The mean should be similar (within 20% for Poisson)
         if result_1000.mean_seu_count > 0:
-            rel_diff = abs(result_100.mean_seu_count - result_1000.mean_seu_count) / result_1000.mean_seu_count
+            rel_diff = (
+                abs(result_100.mean_seu_count - result_1000.mean_seu_count)
+                / result_1000.mean_seu_count
+            )
             assert rel_diff < 0.2
 
 
