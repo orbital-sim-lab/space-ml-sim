@@ -1,0 +1,45 @@
+name: SPENVIS Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly run to catch regressions from upstream library updates
+    - cron: "0 6 * * 1"
+
+jobs:
+  validate:
+    name: Validate radiation model against SPENVIS reference data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run SPENVIS validation tests
+        run: |
+          python -m pytest tests/test_spenvis_validation.py -v \
+            --junitxml=spenvis-results.xml
+
+      - name: Run Poisson cross-validation
+        run: python -m pytest tests/test_poisson_validation.py -v
+
+      - name: Run SGP4 cross-validation
+        run: python -m pytest tests/test_sgp4_crossvalidation.py -v
+
+      - name: Upload validation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spenvis-validation-results
+          path: spenvis-results.xml
+          if-no-files-found: ignore
