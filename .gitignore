@@ -14,7 +14,7 @@ env/
 *.pth
 *.pt
 *.onnx
-data/
+/data/
 *.png
 *.jpg
 *.html
