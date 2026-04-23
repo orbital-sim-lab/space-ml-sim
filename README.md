@@ -1,5 +1,13 @@
 # space-ml-sim
 
+[![PyPI version](https://img.shields.io/pypi/v/space-ml-sim.svg)](https://pypi.org/project/space-ml-sim/)
+[![Python versions](https://img.shields.io/pypi/pyversions/space-ml-sim.svg)](https://pypi.org/project/space-ml-sim/)
+[![Downloads](https://static.pepy.tech/badge/space-ml-sim/month)](https://pepy.tech/project/space-ml-sim)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
+[![CI](https://github.com/orbital-sim-lab/space-ml-sim/actions/workflows/ci.yml/badge.svg)](https://github.com/orbital-sim-lab/space-ml-sim/actions/workflows/ci.yml)
+[![SPENVIS validated](https://github.com/orbital-sim-lab/space-ml-sim/actions/workflows/spenvis-validation.yml/badge.svg)](https://github.com/orbital-sim-lab/space-ml-sim/actions/workflows/spenvis-validation.yml)
+[![Coverage](https://img.shields.io/badge/coverage-80%25%2B-brightgreen.svg)](#quality--security)
+
 **Simulate AI inference on orbital satellite constellations under realistic space radiation.**
 
 SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Cloud-grade TPUs are being tested for on-orbit inference. But what happens to a ResNet or a transformer when a galactic cosmic ray flips a bit in a weight tensor 550 km above Earth?
@@ -47,7 +55,7 @@ pip install space-ml-sim
 From source:
 
 ```bash
-git clone https://github.com/orbital-sim-project/space-ml-sim.git
+git clone https://github.com/orbital-sim-lab/space-ml-sim.git
 cd space-ml-sim
 pip install -e ".[dev]"
 ```
@@ -110,10 +118,20 @@ print(f"ISS: {orbit.altitude_km:.0f} km, {orbit.inclination_deg:.1f} deg")
 ## Examples
 
 ```bash
-python examples/01_basic_constellation.py    # Propagate 100 sats for 1 orbit
-python examples/02_radiation_fault_sweep.py  # Accuracy vs bit flips (all 4 chips)
-python examples/03_tmr_comparison.py         # TMR vs unprotected under faults
+python examples/01_basic_constellation.py          # Propagate 100 sats for 1 orbit
+python examples/02_radiation_fault_sweep.py        # Accuracy vs bit flips (all 4 chips)
+python examples/03_tmr_comparison.py               # TMR vs unprotected under faults
+python examples/04_reproduce_published_seu.py      # Reproduce ISS/SSO/high-LEO published SEU rates
 ```
+
+## Notebooks
+
+Interactive tutorials under `notebooks/`:
+
+- `01_orbital_fault_injection.ipynb` — orbit setup, fault injection, per-layer sensitivity
+- `02_tmr_fault_tolerance.ipynb` — full vs selective TMR, checkpoint rollback
+- `03_constellation_distributed_inference.ipynb` — distributed inference across ISL links
+- `04_cubesat_to_venus_mission.ipynb` — end-to-end mission design: "will your CubeSat's AI survive a Venus flyby?"
 
 ---
 
@@ -167,7 +185,8 @@ Every PR is automatically checked by CI before merge:
 
 | Check | What it does |
 |-------|-------------|
-| **Tests + Coverage** | 494 tests, 80% minimum coverage enforced |
+| **Tests + Coverage** | 497 tests, 80% minimum coverage enforced |
+| **Published-measurement reproduction** | SEU predictions validated against ISS, sun-sync EO, and high-LEO published ranges (see `examples/04_reproduce_published_seu.py`) |
 | **Lint & Format** | `ruff check` + `ruff format` |
 | **Security Scan** | `pip-audit` (dependency CVEs) + `bandit` (code security) |
 | **License Compliance** | Verifies all dependencies are AGPL-compatible |
@@ -185,14 +204,35 @@ bandit -r src/ -c pyproject.toml -ll
 
 ---
 
+## Traction monitor
+
+`scripts/traction_monitor.py` collects public signals about the project
+— PyPI downloads, GitHub stars/forks/traffic, Hacker News and Reddit
+mentions, and any external repos referencing the package — and prints a
+concise markdown summary with week-over-week deltas and actionable
+recommendations. It requires only the Python standard library.
+
+```bash
+# Print to stdout (no files written)
+python scripts/traction_monitor.py --print
+
+# Archive a dated report (default: ~/.space-ml-sim/traction/)
+python scripts/traction_monitor.py
+```
+
+For richer GitHub data (traffic, clones, referrers), set `GITHUB_TOKEN`
+with repo-scoped access before running.
+
+---
+
 ## Roadmap
 
 - [x] **v0.1** -- Keplerian orbits, parametric radiation, fault injection, full TMR
 - [x] **v0.2** -- J2 perturbations, selective TMR, transformer faults, TLE/SGP4 ingestion, CI
 - [x] **v0.3** -- Radiation timeline with SAA detection, quantization-aware fault comparison, sensitivity heatmap, ONNX model import
-- [x] **v0.4** (current) -- SPENVIS validation, Monte Carlo reliability, mission budget calculator, ground track viz, poliastro import
-- [ ] **v0.5** -- Distributed inference across constellation, ISL communication delays
-- [ ] **v0.6** -- Ground station scheduling, downlink-aware task placement, compliance report export
+- [x] **v0.4** -- SPENVIS validation, Monte Carlo reliability, mission budget calculator, ground track viz, poliastro import
+- [x] **v0.5** (current) -- Distributed inference across constellation, ISL communication delays, ground station scheduling, link budget, ECSS/MIL-STD reports, CLI
+- [ ] **v0.6** -- Hardware-in-the-loop validation, downlink-aware task placement, additional chip profiles
 
 ---
 
