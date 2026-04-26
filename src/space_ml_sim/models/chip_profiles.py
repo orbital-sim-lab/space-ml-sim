@@ -22,7 +22,8 @@ class ChipProfile(BaseModel):
     memory_bits: int = Field(gt=0, description="Total bits in on-chip memory")
     notes: str = Field(default="", description="Additional notes about the chip")
 
-    def __repr__(self) -> str:
+    
+        """Auto-generated docstring."""
         return f"ChipProfile({self.name!r}, {self.compute_tops} TOPS, TID={self.tid_tolerance_krad} krad)"
 
 
