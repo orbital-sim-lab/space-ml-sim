@@ -12,6 +12,7 @@ from space_ml_sim.models.chip_profiles import (
     SAMRH71,
     GR740,
     XQRKU060,
+    AURIX_TC4X,
     ALL_CHIPS,
 )
 from space_ml_sim.models.rad_profiles import RadPreset
@@ -28,6 +29,7 @@ __all__ = [
     "SAMRH71",
     "GR740",
     "XQRKU060",
+    "AURIX_TC4X",
     "ALL_CHIPS",
     "RadPreset",
 ]

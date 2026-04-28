@@ -151,6 +151,23 @@ XQRKU060 = ChipProfile(
     "built-in FRAME_ECC for scrubbing, qualified for 15-year missions",
 )
 
+AURIX_TC4X = ChipProfile(
+    name="Infineon AURIX TC4x (TriCore + PPU, automotive)",
+    node_nm=28,
+    tdp_watts=6,
+    max_temp_c=150,
+    # Conservative placeholder derived from generic 28nm CMOS literature.
+    # AURIX is NOT space-qualified; values are for relative comparison only.
+    seu_cross_section_cm2=1e-13,
+    tid_tolerance_krad=5,
+    compute_tops=0.05,  # PPU AI extension @ INT8
+    memory_bits=16 * 8 * 1024**2,  # 16 MB combined Flash + RAM
+    notes="Automotive ASIL-D MCU with hardware lockstep — proposed in 2024 "
+    "small-sat literature as a low-cost rad-tolerant OBC. NOT space-qualified; "
+    "SEU/TID figures derived from 28nm CMOS literature, not direct beam testing. "
+    "Use only for relative trade-study comparison.",
+)
+
 ALL_CHIPS: list[ChipProfile] = [
     TERAFAB_D3,
     TRILLIUM_V6E,
@@ -162,4 +179,5 @@ ALL_CHIPS: list[ChipProfile] = [
     SAMRH71,
     GR740,
     XQRKU060,
+    AURIX_TC4X,
 ]
