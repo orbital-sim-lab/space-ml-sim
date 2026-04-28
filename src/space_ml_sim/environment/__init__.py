@@ -1,6 +1,12 @@
 """Space environment models: radiation, thermal, power, communications, and ISL networking."""
 
 from space_ml_sim.environment.radiation import RadiationEnvironment
+from space_ml_sim.environment.heliocentric_radiation import HeliocentricEnvironment
+from space_ml_sim.environment.solar_particle_event import (
+    SPEStatisticalModel,
+    SolarParticleEvent,
+    mission_spe_dose,
+)
 from space_ml_sim.environment.thermal import ThermalModel
 from space_ml_sim.environment.power import PowerModel
 from space_ml_sim.environment.comms import CommsModel
@@ -40,6 +46,10 @@ from space_ml_sim.environment.sel_model import (
 
 __all__ = [
     "RadiationEnvironment",
+    "HeliocentricEnvironment",
+    "SPEStatisticalModel",
+    "SolarParticleEvent",
+    "mission_spe_dose",
     "ThermalModel",
     "PowerModel",
     "CommsModel",

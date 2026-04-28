@@ -22,8 +22,15 @@ import torch
 if TYPE_CHECKING:
     import pandas as pd
 
+from space_ml_sim.environment.heliocentric_radiation import HeliocentricEnvironment
 from space_ml_sim.environment.radiation import RadiationEnvironment
 from space_ml_sim.models.chip_profiles import ChipProfile
+
+# Anything exposing the rate contract — base_seu_rate (upsets/bit/sec) and
+# tid_rate_krad_per_day — works as a fault-injection environment. Both
+# RadiationEnvironment (LEO/MEO/GEO) and HeliocentricEnvironment
+# (interplanetary) satisfy this contract.
+RadEnvLike = RadiationEnvironment | HeliocentricEnvironment
 
 
 @dataclass(frozen=True)
@@ -46,7 +53,7 @@ class FaultInjector:
 
     def __init__(
         self,
-        rad_env: RadiationEnvironment,
+        rad_env: RadEnvLike,
         chip_profile: ChipProfile,
         seed: int | None = None,
     ) -> None:
