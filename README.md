@@ -22,6 +22,10 @@ SpaceX is building TERAFAB with 200 TOPS rad-hardened chips for AI Sat Mini. Clo
 
 **Radiation environment** -- Parametric SEU and TID models for LEO (500 km to 2000 km), SAA enhancement, shielding attenuation, altitude/inclination-dependent rates
 
+**Heliocentric / interplanetary radiation** -- GCR-only background model for missions outside Earth's magnetosphere (lunar transfer, cislunar, Mars transit, Venus flyby), with solar-cycle modulation and heliocentric-distance scaling. Calibrated against CRaTER and Voyager-class measurements, drop-in replacement for `RadiationEnvironment`
+
+**Solar Particle Events** -- Statistical SPE model with ESP–PSYCHIC tail (Xapsos 2000) for episodic high-energy proton bursts. Annual frequency by magnitude (small/medium/large/extreme), Monte-Carlo mission sampling, 95th-percentile worst-case dose budgeting
+
 **ML fault injection** -- Flip bits in PyTorch model weights and activations using radiation-derived Poisson rates. Sweep fault counts and measure accuracy degradation. Transformer-aware targeting for attention, LayerNorm, and embedding layers
 
 **Fault tolerance** -- Full TMR, selective TMR (per-layer vulnerability ranking), and checkpoint rollback with majority voting and anomaly detection
@@ -165,17 +169,37 @@ space_ml_sim/
 
 ---
 
+## Chip selection
+
+Need help picking a chip for your mission? See
+[`docs/chip_selection_guide.md`](docs/chip_selection_guide.md) for a quick
+decision tree by mission profile (LEO, SSO, MEO, GEO, lunar transfer,
+Mars transit, Venus flyby) and by compute requirement.
+
 ## Chip Profiles
 
-| Chip | Node | TDP | INT8 TOPS | TID Tolerance | Notes |
-|------|------|-----|-----------|---------------|-------|
-| TERAFAB D3 | 2 nm | 300 W | 200 | 100 krad | SpaceX rad-hardened |
-| Trillium TPU v6e | 4 nm | 200 W | 450 | 15 krad | COTS with shielding |
-| Jetson AGX Orin | 8 nm | 60 W | 275 | 10 krad | Flying on Planet Labs |
-| Versal AI Core | 7 nm | 75 W | 130 | 100 krad | Space-grade, 15-year missions |
-| Zynq UltraScale+ | 16 nm | 10 W | 0.5 | 30 krad | Xiphos Q8S OBC |
-| BAE RAD5500 | 45 nm | 15 W | 0.001 | 1000 krad | Space-grade baseline |
-| NOEL-V FT | 28 nm | 5 W | 0.01 | 50 krad | Open RISC-V in orbit |
+| Chip | Constant | Node | TDP | INT8 TOPS | TID Tolerance | Notes |
+|------|----------|------|-----|-----------|---------------|-------|
+| TERAFAB D3 (projected) | `TERAFAB_D3` | 2 nm | 300 W | 200 | 100 krad | SpaceX rad-hardened, AI Sat Mini |
+| Trillium TPU v6e | `TRILLIUM_V6E` | 4 nm | 200 W | 450 | 15 krad | COTS TPU with shielding |
+| Jetson AGX Orin | `JETSON_AGX_ORIN` | 8 nm | 60 W | 275 | 10 krad | Flying on Planet Labs |
+| Versal AI Core XQRVC1902 | `VERSAL_AI_CORE` | 7 nm | 75 W | 130 | 100 krad | Space-grade, 15-year missions |
+| Zynq UltraScale+ (Xiphos Q8S) | `ZYNQ_ULTRASCALE` | 16 nm | 10 W | 0.5 | 30 krad | Rad-tolerant FPGA SoC OBC |
+| BAE RAD5500 | `RAD5500` | 45 nm | 15 W | 0.001 | 1000 krad | Space-grade baseline |
+| NOEL-V Fault-Tolerant | `NOEL_V_FT` | 28 nm | 5 W | 0.01 | 50 krad | Open RISC-V (TRISAT-R) |
+| Microchip SAMRH71F20C | `SAMRH71` | 65 nm | 1.5 W | 0.0005 | 100 krad | Rad-hard Cortex-M7, ESA JUICE |
+| Cobham GR740 | `GR740` | 65 nm | 3 W | 0.002 | 300 krad | Rad-hard LEON4 quad, PLATO/FLEX |
+| AMD XQRKU060 | `XQRKU060` | 20 nm | 12 W | 1.5 | 100 krad | Most-flown space-grade FPGA |
+| Infineon AURIX TC4x ⚠ | `AURIX_TC4X` | 28 nm | 6 W | 0.05 | 5 krad | **Automotive ASIL-D, NOT space-qualified** |
+
+⚠ AURIX values are derived from generic 28 nm CMOS literature, not direct beam testing.
+Use only for relative trade-study comparison.
+
+```python
+from space_ml_sim.models import ALL_CHIPS, TERAFAB_D3
+for chip in ALL_CHIPS:
+    print(chip.name, chip.compute_tops, chip.tid_tolerance_krad)
+```
 
 ---
 
