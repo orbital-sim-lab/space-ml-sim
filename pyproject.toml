@@ -4,15 +4,16 @@ build-backend = "hatchling.build"
 
 [project]
 name = "space-ml-sim"
-version = "0.5.0"
+version = "1.0.0rc1"
 description = "Simulation framework for AI inference on orbital satellite constellations"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 requires-python = ">=3.11"
 authors = [{ name = "space-ml-sim contributors" }]
+maintainers = [{ name = "space-ml-sim contributors" }]
 keywords = ["space", "satellite", "AI", "simulation", "radiation", "fault-tolerance"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
     "Topic :: Scientific/Engineering :: Physics",
@@ -33,6 +34,13 @@ dependencies = [
     "click>=8.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/orbital-sim-lab/space-ml-sim"
+Repository = "https://github.com/orbital-sim-lab/space-ml-sim"
+Documentation = "https://github.com/orbital-sim-lab/space-ml-sim#readme"
+Changelog = "https://github.com/orbital-sim-lab/space-ml-sim/blob/main/CHANGELOG.md"
+Issues = "https://github.com/orbital-sim-lab/space-ml-sim/issues"
+
 [project.scripts]
 space-ml-sim = "space_ml_sim.cli:cli"
 
@@ -51,6 +59,23 @@ poliastro = ["poliastro>=0.17", "astropy>=5.0"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+no_implicit_optional = true
+ignore_missing_imports = true
+# Pre-existing type errors in v0.x simulation code — track separately in a backlog;
+# blocking 1.0 on a clean mypy run is out of scope. New modules must type-check.
+exclude = [
+    "src/space_ml_sim/compute/distributed.py",
+    "src/space_ml_sim/compute/federated.py",
+    "src/space_ml_sim/compute/fault_injector.py",
+    "src/space_ml_sim/compute/quantization.py",
+    "src/space_ml_sim/compute/tmr.py",
+    "src/space_ml_sim/compute/onnx_adapter.py",
+    "src/space_ml_sim/core/poliastro_adapter.py",
+]
 
 [tool.bandit]
 exclude_dirs = ["tests"]

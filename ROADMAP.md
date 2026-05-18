@@ -85,7 +85,38 @@ Focus: Expand addressable market beyond LEO, add mission-critical analysis tools
 - [x] Expanded CLI (analyze, link-budget, constellations commands)
 - [x] MEO/GEO factory presets (GPS, GEO orbits)
 
-## Accuracy Priorities
+### v1.0 (Stability commitment)
+Focus: Lock the public API and commit to semantic versioning.
+
+- [x] Bump `Development Status` classifier to `5 - Production/Stable`
+- [x] Define public API stability contract (see below)
+- [x] Add `CHANGELOG.md` with full release history
+- [ ] Cut `1.0.0rc1` to PyPI and soak for two weeks
+- [ ] Cut `1.0.0` after RC soak with no breaking issues
+- [ ] File IARC copyright waiver before announcing 1.0 publicly
+
+#### Public API stability contract
+
+Starting at 1.0.0, the **public API** is everything importable from these modules:
+
+- `space_ml_sim.compute.fault_injector` — `FaultInjector`
+- `space_ml_sim.compute.tmr` — `TMRWrapper`
+- `space_ml_sim.environment.radiation` — `RadiationEnvironment`
+- `space_ml_sim.environment.heliocentric_radiation` — `HeliocentricEnvironment`
+- `space_ml_sim.environment.solar_particle_event` — `SolarParticleEvent` and constructors
+- `space_ml_sim.environment.power` — public dataclasses and helpers
+- `space_ml_sim.models.chip_profiles` — every exported `ChipProfile` constant
+- `space_ml_sim.core` — orbit propagation and constellation factories
+- `space_ml_sim.analysis` — analysis pipelines used in the published notebooks
+- `space_ml_sim.comms` — link budget and ISL APIs
+- `space_ml_sim.reports` — ECSS / MIL-STD report generators
+- `space_ml_sim.cli` — `space-ml-sim` CLI commands and flags
+
+Symbols starting with `_` and any `*.internal` submodule are **not** public and may
+change without notice. Breaking changes to the public API after 1.0.0 require a
+major version bump and a deprecation cycle of at least one minor release.
+
+
 
 Every release must pass the deterministic accuracy validation suite. New features
 must include analytical validation tests where possible. The following accuracy

@@ -409,3 +409,76 @@ def analyze(
         with open(output, "w") as f:
             f.write(result.ecss_report_html)
         console.print(f"[green]ECSS report saved to {output}[/]")
+
+
+@cli.command()
+def doctor() -> None:
+    """Verify the installation: Python, required and optional dependencies, public API.
+
+    Useful as a smoke test after `pip install space-ml-sim`. Exits with a non-zero
+    status if any required dependency is missing so it composes in shell pipelines.
+    """
+    import importlib
+    import platform
+    import sys
+
+    import space_ml_sim
+
+    required = [
+        "numpy",
+        "sgp4",
+        "torch",
+        "pydantic",
+        "pandas",
+        "plotly",
+        "rich",
+        "click",
+    ]
+    optional = [
+        ("onnx", "onnx extra"),
+        ("onnxruntime", "onnx extra"),
+        ("poliastro", "poliastro extra"),
+        ("astropy", "poliastro extra"),
+        ("torchvision", "tutorial notebooks"),
+    ]
+
+    table = Table(title=f"space-ml-sim {space_ml_sim.__version__} — install check")
+    table.add_column("Component")
+    table.add_column("Status")
+    table.add_column("Detail")
+
+    table.add_row("Python", "[green]OK[/]", f"{platform.python_version()} on {platform.system()}")
+    table.add_row(
+        "space_ml_sim",
+        "[green]OK[/]",
+        f"{len(space_ml_sim.__all__) - 1} public symbols",
+    )
+
+    missing_required: list[str] = []
+    for pkg in required:
+        try:
+            mod = importlib.import_module(pkg)
+            version = getattr(mod, "__version__", "?")
+            table.add_row(pkg, "[green]OK[/]", str(version))
+        except ImportError:
+            missing_required.append(pkg)
+            table.add_row(pkg, "[red]MISSING[/]", "required — pip install space-ml-sim")
+
+    for pkg, reason in optional:
+        try:
+            mod = importlib.import_module(pkg)
+            version = getattr(mod, "__version__", "?")
+            table.add_row(pkg, "[green]OK[/]", f"optional ({reason}) — {version}")
+        except ImportError:
+            table.add_row(pkg, "[yellow]absent[/]", f"optional, needed for {reason}")
+
+    console.print(table)
+
+    if missing_required:
+        console.print(
+            f"\n[red]✗ Missing {len(missing_required)} required dependency: "
+            f"{', '.join(missing_required)}[/]"
+        )
+        sys.exit(1)
+
+    console.print("\n[green]✓ Install is healthy.[/]")
